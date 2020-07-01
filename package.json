@@ -1,0 +1,28 @@
+{
+  "name": "workflowy-clone-frontend",
+  "version": "1.0.0",
+  "description": "the client code for my (simplified) clone of Workflowy",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cedwards036/workflowy-clone-frontend.git"
+  },
+  "author": "Christopher Edwards",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cedwards036/workflowy-clone-frontend/issues"
+  },
+  "homepage": "https://github.com/cedwards036/workflowy-clone-frontend#readme",
+  "devDependencies": {
+    "mocha": "^8.0.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}
