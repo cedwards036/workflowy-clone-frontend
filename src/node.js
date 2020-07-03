@@ -1,6 +1,6 @@
-import produce from "immer";
+import {immerable, produce} from "immer";
 
-export default ({
+export default function Node({
     id = '',
     text = '', 
     isCompleted = false, 
@@ -8,15 +8,20 @@ export default ({
     tags = [],
     childIDs = [],
     parentID = ''
-} = {}) => ({
-    id,
-    text, 
-    isCompleted, 
-    isExpanded, 
-    tags, 
-    childIDs, 
-    parentID,
+} = {}) {
+    const node = Object.create(Node.prototype);
+    node.id = id;
+    node.text = text; 
+    node.isCompleted = isCompleted; 
+    node.isExpanded = isExpanded;
+    node.tags = tags;
+    node.childIDs = childIDs;
+    node.parentID = parentID;
+    return node;
+}
 
+Node.prototype = {
+    [immerable]: true,
     toggleCompleted() {
         return produce(this, draft => {
             draft.isCompleted = !draft.isCompleted;
@@ -34,4 +39,4 @@ export default ({
             draft.tags.push(tag);
         });
     }
-});
+}

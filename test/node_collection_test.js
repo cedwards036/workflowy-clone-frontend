@@ -1,4 +1,5 @@
 import assert from 'assert';
+import produce from "immer";
 import NodeCollection from '../src/node-collection';
 import Node from '../src/node';
 
@@ -46,6 +47,59 @@ describe('NodeCollection', () => {
             it('returns an empty array', () => {
                 const nodeCollection = NodeCollection();
                 assert.deepStrictEqual(nodeCollection.getAncestorIDs('some_id'), []);
+            });
+        });
+    });
+    
+    describe('buildTree', () => {
+        describe('when the collection contains the root node ID', () => {
+            it('returns just the root node when the root has no children', () => {
+                const rootNode = Node({id: 'apce93t'});
+                const nodeCollection = NodeCollection().add(rootNode);
+                const expected = produce(rootNode, draft => {
+                    draft.children = [];
+                    draft.level = 0;
+                })
+                assert.deepStrictEqual(nodeCollection.buildTree(rootNode.id), expected);
+            });
+
+            it('returns a nested structure with direct children embedded within their parents', () => {
+                const rootNode = Node({id: '09wfk4t'});
+                const child1 = Node({id: '115363', parentID: rootNode.id});
+                const child2 = Node({id: '184364', parentID: rootNode.id});
+                const grandchild = Node({id: 'f2244gh', parentID: child2.id});
+                const nodeCollection = NodeCollection().add(rootNode).add(child1).add(child2).add(grandchild);
+                const expected = produce(rootNode, draft => {
+                    draft.children = [
+                        produce(child1, draft => {
+                            draft.children = [];
+                            draft.level = 1;
+                        }),
+                        produce(child2, draft => {
+                            draft.children = [
+                                produce(grandchild, draft => {
+                                    draft.children = [];
+                                    draft.level = 2;
+                                })
+                            ];
+                            draft.childIDs = [grandchild.id];
+                            draft.level = 1;
+                        })
+                    ];
+                    draft.childIDs = [child1.id, child2.id];
+                    draft.level = 0;
+                })
+                assert.deepStrictEqual(nodeCollection.buildTree(rootNode.id), expected);
+            });
+        });
+
+        describe('when the collection does not contain the root node ID', () => {
+            it('returns an empty node', () => {
+                const nodeCollection = NodeCollection();
+                const expected = Node();
+                expected.children = [];
+                expected.level = 0;
+                assert.deepStrictEqual(nodeCollection.buildTree('some_id'), expected);
             });
         });
     });

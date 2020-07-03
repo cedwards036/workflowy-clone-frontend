@@ -1,6 +1,12 @@
-import produce from "immer";
+import {immerable, produce} from "immer";
+import Node from "./node";
 
-export default () => ({
+export default function NodeCollection() {
+    return Object.create(NodeCollection.prototype);
+}
+
+NodeCollection.prototype = {
+    [immerable]: true,
     add(node) {
         return produce(this, draft => {
             draft[node.id] = node;
@@ -22,5 +28,24 @@ export default () => ({
             }
             return ancestorIDs;
         }
+    },
+
+    buildTree(rootNodeID) {
+        let rootNode;
+        if (!this.hasOwnProperty(rootNodeID)) {
+            rootNode = Node();
+        } else {
+            rootNode = this[rootNodeID];
+        }
+        return this.convertToTree(rootNode, 0);
+    },
+
+    convertToTree(node, level) {
+        return produce(node, draft => {
+            draft.children = draft.childIDs.map(childID => {
+                return this.convertToTree(this[childID], level + 1);
+            });
+            draft.level = level;
+        });
     }
-});
+}
