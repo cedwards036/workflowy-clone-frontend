@@ -26,5 +26,8 @@
     "mocha": "^8.0.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {
+    "immer": "^7.0.5"
   }
 }
