@@ -3,8 +3,8 @@ import NodeCollection from './node-collection';
 import {renderTree} from './render';
 import addEventListeners from './event-listeners';
 
-addEventListeners(state);
 const state = {nodeCollection: null, rootNodeID: ''};
+addEventListeners(state);
 const nodeCollection = NodeCollection()
                         .add(Node({text: 'root_node', id: 'f983jf', isExpanded: true}))
                         .add(Node({text: 'go to the store', id: 'v0983f', parentID: 'f983jf', isExpanded: true}))
