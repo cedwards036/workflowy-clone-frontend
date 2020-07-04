@@ -20,7 +20,7 @@ export default function addEventListeners(state) {
                 toggleNodeCompletion(nodeElement, nodeID, state);
             //plain enter to add new sibling node
             } else {
-                addSiblingNode(nodeElement, nodeID, state);
+                addSiblingNode(nodeID, state);
                 e.preventDefault();
             }
         }
@@ -39,7 +39,7 @@ function toggleNodeCompletion(nodeElement, nodeID, state) {
 }
 
 function addSiblingNode(nodeID, state) {
-    const parentID = state.nodeCollection[nodeID].parentID
+    const parentID = state.nodeCollection[nodeID].parentID;
     const newNodeIndex = state.nodeCollection[parentID].childIDs.indexOf(nodeID) + 1;
     const newNodeID = Math.floor(Math.random() * 1000000).toString();
     const newNode = Node({id: newNodeID, parentID: parentID});
