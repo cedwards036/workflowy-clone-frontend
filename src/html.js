@@ -5,7 +5,7 @@ const DOT = '&#9679;';
 export default {
     forNodeTree(rootNode) {
         return `
-            <div style="margin-left:${rootNode.level * 30}px;" data-id="${rootNode.id}" class="${this.completedClass(rootNode)}">
+            <div style="margin-left:${rootNode.level * 30}px;" data-id="${rootNode.id}" class="node ${this.completedClass(rootNode)}">
                 ${this.forNodeRow(rootNode)}
                 ${this.forChildNodes(rootNode)}
             </div>
@@ -15,31 +15,30 @@ export default {
     forNodeRow(node) {
         return `
             <div class="node-row">
-                ${this.forNodeArrow(node.isExpanded)}
-                <div class="node-bullet">${DOT}</div>
+                <div class="node-arrow noselect">${this.nodeArrow(node)}</div>
+                <div class="node-bullet noselect">${DOT}</div>
                 <div class="node-text" contenteditable>${node.text}</div>
             </div>
         `;
     },
 
     forChildNodes(node) {
-        if (node.isExpanded) {
-            return `
-                <div class="node-children">
-                    ${node.children.map(child => this.forNodeTree(child)).join('')}
-                </div>
-            `;
-        } else {
-            return '';
-        }
+        return `
+            <div class="node-children ${this.childrenClass(node)}">
+                ${node.children.map(child => this.forNodeTree(child)).join('')}
+            </div>
+        `;
     },
 
-    forNodeArrow(isExpanded) {
-        const arrow = isExpanded ? DOWN_ARROW : RIGHT_ARROW;
-        return `<div class="node-arrow">${arrow}</div>`;
+    nodeArrow(node) {
+        return node.isExpanded ? DOWN_ARROW : RIGHT_ARROW;
     },
 
     completedClass(node) {
         return node.isCompleted ? 'completed' : '';
+    },
+
+    childrenClass(node) {
+        return node.isExpanded ? '' : 'hidden';
     }
 }
