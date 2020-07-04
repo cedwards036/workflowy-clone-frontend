@@ -25,6 +25,41 @@ NodeCollection.prototype = {
         });
     },
 
+    indent(nodeID) {
+        if (!this.hasValidParent(nodeID)) {
+            return this;
+        } else {
+            const oldParent = this[this[nodeID].parentID];
+            const indexInParent = oldParent.childIDs.indexOf(nodeID);
+            if (indexInParent > 0) {
+                const newParent = this[oldParent.childIDs[indexInParent - 1]];
+                return produce(this, draft => {
+                    draft[nodeID].parentID = newParent.id;
+                    draft[newParent.id].childIDs.push(nodeID);
+                    draft[newParent.id].isExpanded = true;
+                    draft[oldParent.id].childIDs = draft[oldParent.id].childIDs.filter(id => id != nodeID);
+                }); 
+            } else {
+                return this;
+            }            
+        }
+    },
+
+    unindent(nodeID) {
+        if (!this.hasValidGrandparent(nodeID)) {
+            return this;
+        } else {
+            const oldParent = this[this[nodeID].parentID];
+            const newParent = this[oldParent.parentID];
+            const indexInNewParent = newParent.childIDs.indexOf(oldParent.id) + 1;
+            return produce(this, draft => {
+                draft[nodeID].parentID = newParent.id;
+                draft[newParent.id].childIDs.splice(indexInNewParent, 0, nodeID);
+                draft[oldParent.id].childIDs = draft[oldParent.id].childIDs.filter(id => id != nodeID);
+            });            
+        }
+    },
+
     toggleExpandedByID(nodeID) {
         if (!this.hasOwnProperty(nodeID)) {
             return this;
@@ -76,5 +111,15 @@ NodeCollection.prototype = {
             });
             draft.level = level;
         });
+    },
+
+    hasValidParent(nodeID) {
+        return this.hasOwnProperty(nodeID) && 
+               this.hasOwnProperty(this[nodeID].parentID);
+    },
+
+    hasValidGrandparent(nodeID) {
+        return this.hasValidParent(nodeID) && 
+               this.hasOwnProperty(this[this[nodeID].parentID].parentID);
     }
 }

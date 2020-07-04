@@ -17,7 +17,7 @@ export default {
             <div class="node-row">
                 <div class="node-arrow noselect">${this.nodeArrow(node)}</div>
                 <div class="node-bullet noselect">${DOT}</div>
-                <div class="node-text" contenteditable>${node.text}</div>
+                <div class="node-text" contenteditable="true" tabindex="-1">${node.text}</div>
             </div>
         `;
     },

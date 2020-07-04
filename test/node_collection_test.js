@@ -34,6 +34,77 @@ describe('NodeCollection', () => {
         });
     });
 
+    describe('indent', () => {
+        let root, node1, node1Child, node2, nodeCollection;
+        beforeEach(() => {
+            root = Node({id: '2634235'});
+            node1 = Node({id: '892j9r', parentID: root.id});
+            node1Child = Node({id: '892j9r', parentID: node1.id});
+            node2 = Node({id: '543734', parentID: root.id});
+            nodeCollection = NodeCollection()
+                                    .add(root)
+                                    .add(node1)
+                                    .add(node2)
+                                    .add(node1Child);
+        });
+
+        it('makes the given node the first child of the sibling immediately above it', () => {
+            nodeCollection = nodeCollection.indent(node2.id);
+            assert.equal(nodeCollection[node1.id].isExpanded, true);
+        });
+
+        it('expands the indented node\'s new parent', () => {
+            nodeCollection = nodeCollection.indent(node2.id);
+
+        });
+
+        it('does nothing if the given node does not exist', () => {
+            assert.deepStrictEqual(nodeCollection.indent('unknown_id'), nodeCollection);
+        });
+
+        it('does nothing if the given node has no parent', () => {
+            assert.deepStrictEqual(nodeCollection.indent(root.id), nodeCollection);
+        });
+
+        it('does nothing if the given node is the first child of its parent', () => {
+            assert.deepStrictEqual(nodeCollection.indent(node1.id), nodeCollection);
+        });
+    });
+
+    describe('unindent', () => {
+        let root, node1, node2, node1Sibling, nodeCollection;
+        beforeEach(() => {
+            root = Node({id: '2634235'});
+            node1 = Node({id: '892j9r', parentID: root.id});
+            node2 = Node({id: '543734', parentID: node1.id});
+            node1Sibling = Node({id: 'jttjre5', parentID: root.id});
+            nodeCollection = NodeCollection()
+                                    .add(root)
+                                    .add(node1)
+                                    .add(node2)
+                                    .add(node1Sibling);
+        });
+
+        it('makes the given node next sibling of its parent', () => {
+            nodeCollection = nodeCollection.unindent(node2.id);
+            assert.equal(nodeCollection[node2.id].parentID, root.id);
+            assert.deepStrictEqual(nodeCollection[node1.id].childIDs, []);
+            assert.deepStrictEqual(nodeCollection[root.id].childIDs, [node1.id, node2.id, node1Sibling.id]);
+        });
+
+        it('does nothing if the given node does not exist', () => {
+            assert.deepStrictEqual(nodeCollection.unindent('unknown_id'), nodeCollection);
+        });
+
+        it('does nothing if the given node has no parent', () => {
+            assert.deepStrictEqual(nodeCollection.unindent(root.id), nodeCollection);
+        });
+
+        it('does nothing if the given node has no grandparent', () => {
+            assert.deepStrictEqual(nodeCollection.unindent(node1.id), nodeCollection);
+        });
+    });
+
     describe('toggleExpandedByID', () => {
         it('toggles expansion on the specified node', () => {
             const node = Node({id: '892j9r'});
