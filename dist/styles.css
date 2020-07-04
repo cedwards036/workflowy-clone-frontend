@@ -27,6 +27,7 @@
 
 .node-text {
     padding-left: 5px;
+    min-width: 150px;
 }
 
 .completed .node-text {
