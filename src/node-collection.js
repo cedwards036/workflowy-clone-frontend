@@ -16,6 +16,15 @@ NodeCollection.prototype = {
         });
     },
 
+    addAsNthChild(node, n) {
+        return produce(this, draft => {
+            draft[node.id] = node;
+            if (draft.hasOwnProperty(node.parentID)) {
+                draft[node.parentID].childIDs.splice(n, 0, node.id);
+            }
+        });
+    },
+
     toggleExpandedByID(nodeID) {
         if (!this.hasOwnProperty(nodeID)) {
             return this;

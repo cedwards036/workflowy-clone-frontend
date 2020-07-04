@@ -5,7 +5,7 @@ const DOT = '&#9679;';
 export default {
     forNodeTree(rootNode) {
         return `
-            <div style="margin-left:${rootNode.level * 30}px;" data-id="${rootNode.id}" class="node ${this.completedClass(rootNode)}">
+            <div data-id="${rootNode.id}" class="node ${this.completedClass(rootNode)}">
                 ${this.forNodeRow(rootNode)}
                 ${this.forChildNodes(rootNode)}
             </div>

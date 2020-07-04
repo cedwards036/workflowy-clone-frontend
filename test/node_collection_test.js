@@ -19,6 +19,21 @@ describe('NodeCollection', () => {
         });
     });
 
+    describe('addAsNthChild', () => {
+        it('adds the given node to the collection as the nth child of its parent', () => {
+            const parent = Node({id: '892j9r'});
+            const firstChild = Node({id: '543734', parentID: parent.id});
+            const secondChild = Node({id: 'lr23h4', parentID: parent.id});
+            const thirdChild = Node({id: 'g4h5h4', parentID: parent.id});
+            const nodeCollection = NodeCollection()
+                                    .add(parent)
+                                    .add(firstChild)
+                                    .add(thirdChild)
+                                    .addAsNthChild(secondChild, 1);
+            assert.deepStrictEqual(nodeCollection[parent.id].childIDs, ['543734', 'lr23h4', 'g4h5h4']);
+        });
+    });
+
     describe('toggleExpandedByID', () => {
         it('toggles expansion on the specified node', () => {
             const node = Node({id: '892j9r'});
