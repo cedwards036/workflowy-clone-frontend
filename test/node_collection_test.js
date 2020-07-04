@@ -133,6 +133,20 @@ describe('NodeCollection', () => {
         }); 
     });
 
+    describe('updateTextByID', () => {
+        it('updates the specified node\'s text', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node).updateTextByID(node.id, 'new text');
+            assert.deepStrictEqual(nodeCollection[node.id].text, 'new text');
+        }); 
+
+        it('does nothing when the node doesn\'t exist', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node);
+            assert.deepStrictEqual(nodeCollection.updateTextByID('', ''), nodeCollection);
+        }); 
+    });
+
     describe('getAncestorIDs', () => {
         describe('when the collection contains the node ID', () => {
             it('returns an empty array when the node has no ancestors', () => {

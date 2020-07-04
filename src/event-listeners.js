@@ -28,16 +28,26 @@ export default function addEventListeners(state) {
                     e.preventDefault();
                 }
             } else if (e.keyCode === TAB) {
+                //shift-tab to unindent node
                 if (e.shiftKey) {
                     maintainCursorThroughAction(unindentNode, nodeID, state);
                     e.preventDefault();
                     return false;
+                //shift to indent node
                 } else {
                     maintainCursorThroughAction(indentNode, nodeID, state);
                     e.preventDefault();
                     return false;
                 }
             }
+        }
+    });
+
+    document.getElementById('list').addEventListener('input', (e) => {
+        const nodeElement = e.target.closest('.node');
+        const nodeID = nodeElement.dataset.id;
+        if (e.target.classList.contains('node-text')) {
+            updateNodeText(nodeElement, nodeID, state);
         }
     });
 }
@@ -70,6 +80,11 @@ function indentNode(nodeID, state) {
 function unindentNode(nodeID, state) {
     state.nodeCollection = state.nodeCollection.unindent(nodeID);
     renderTree(state.nodeCollection.buildTree(state.rootNodeID));
+}
+
+function updateNodeText(nodeElement, nodeID, state) {
+    const newText = nodeElement.querySelector('.node-text').innerText;
+    state.nodeCollection = state.nodeCollection.updateTextByID(nodeID, newText);
 }
 
 function maintainCursorThroughAction(action, nodeID, state) {

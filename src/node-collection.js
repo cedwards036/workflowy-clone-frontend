@@ -80,6 +80,16 @@ NodeCollection.prototype = {
         }
     },
 
+    updateTextByID(nodeID, newText) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return this;
+        } else {
+            return produce(this, draft => {
+                draft[nodeID].text = newText;
+            }); 
+        }
+    },
+
     getAncestorIDs(nodeID) {
         if (!this.hasOwnProperty(nodeID)) {
             return [];
