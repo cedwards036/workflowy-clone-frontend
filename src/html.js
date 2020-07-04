@@ -1,5 +1,3 @@
-
-
 const RIGHT_ARROW = '&#9654;';
 const DOWN_ARROW = '&#9660;';
 const DOT = '&#9679;';
