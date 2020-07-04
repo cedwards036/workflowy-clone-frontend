@@ -19,6 +19,34 @@ describe('NodeCollection', () => {
         });
     });
 
+    describe('toggleExpandedByID', () => {
+        it('toggles expansion on the specified node', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node).toggleExpandedByID(node.id);
+            assert.deepStrictEqual(nodeCollection[node.id].isExpanded, true);
+        }); 
+
+        it('does nothing when the node doesn\'t exist', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node);
+            assert.deepStrictEqual(nodeCollection.toggleExpandedByID(''), nodeCollection);
+        }); 
+    });
+
+    describe('toggleCompletedByID', () => {
+        it('toggles completion on the specified node', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node).toggleCompletedByID(node.id);
+            assert.deepStrictEqual(nodeCollection[node.id].isCompleted, true);
+        }); 
+
+        it('does nothing when the node doesn\'t exist', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node);
+            assert.deepStrictEqual(nodeCollection.toggleCompletedByID(''), nodeCollection);
+        }); 
+    });
+
     describe('getAncestorIDs', () => {
         describe('when the collection contains the node ID', () => {
             it('returns an empty array when the node has no ancestors', () => {

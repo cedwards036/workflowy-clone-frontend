@@ -16,6 +16,26 @@ NodeCollection.prototype = {
         });
     },
 
+    toggleExpandedByID(nodeID) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return this;
+        } else {
+            return produce(this, draft => {
+                draft[nodeID] = draft[nodeID].toggleExpanded();
+            }); 
+        }
+    },
+
+    toggleCompletedByID(nodeID) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return this;
+        } else {
+            return produce(this, draft => {
+                draft[nodeID] = draft[nodeID].toggleCompleted();
+            }); 
+        }
+    },
+
     getAncestorIDs(nodeID) {
         if (!this.hasOwnProperty(nodeID)) {
             return [];

@@ -32,4 +32,16 @@ describe('Node', () => {
             assert.equal(node.addTag('tag1').tags.includes('tag1'), true);
         });
     });
+
+    describe('expand', () => {
+        it('expands the given node if the node is not expanded', () => {
+            const node = Node({isExpanded: false});
+            assert.equal(node.expand().isExpanded, true);
+        });
+
+        it('does nothing if the node is already expanded', () => {
+            const node = Node({isExpanded: true});
+            assert.equal(node.expand().isExpanded, true);
+        });
+    });
 });

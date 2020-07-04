@@ -28,6 +28,12 @@ Node.prototype = {
         });
     },
 
+    expand() {
+        return produce(this, draft => {
+            draft.isExpanded = true;
+        });
+    },
+
     toggleExpanded() {
         return produce(this, draft => {
             draft.isExpanded = !draft.isExpanded;
