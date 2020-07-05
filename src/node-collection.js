@@ -100,6 +100,16 @@ NodeCollection.prototype = {
         }
     },
 
+    deleteByID(nodeID) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return this;
+        } else {
+            return produce(this, draft => {
+                deleteNodeFromCollection(draft, nodeID);
+            }); 
+        }
+    },
+
     getAncestorIDs(nodeID) {
         if (!this.hasOwnProperty(nodeID)) {
             return [];
@@ -184,4 +194,28 @@ NodeCollection.prototype = {
         return this.hasValidParent(nodeID) && 
                this.hasOwnProperty(this[this[nodeID].parentID].parentID);
     }
+}
+
+function deleteNodeFromCollection(collection, nodeID) {
+    deleteNodeReferenceInParent(collection, nodeID);
+    deleteNodeAndAllChildren(collection, nodeID);
+}
+
+function deleteNodeReferenceInParent(collection, nodeID) {
+    const parentID = collection[nodeID].parentID;
+    if (collection.hasOwnProperty(parentID)) {
+        const indexInParent = collection[parentID].childIDs.indexOf(nodeID);
+        collection[parentID].childIDs.splice(indexInParent, 1);
+    }
+}
+
+function deleteNodeAndAllChildren(collection, nodeID) {
+    let toDelete = [nodeID];
+    let currentNode;
+    while (toDelete.length > 0) {
+        currentNode = collection[toDelete.pop()];
+        delete collection[currentNode.id];
+        toDelete = toDelete.concat(currentNode.childIDs);
+    }
+    delete collection[nodeID];
 }

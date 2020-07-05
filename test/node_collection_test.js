@@ -153,11 +153,44 @@ describe('NodeCollection', () => {
         }); 
     });
 
+    describe('deleteByID', () => {
+        it('deletes the given node from the collection', () => {
+            const nodeCollection = NodeCollection()
+            const node = Node({id: '892j9r'});
+            const collectionWithNewNode = nodeCollection.add(node);
+            assert.deepStrictEqual(collectionWithNewNode.deleteByID(node.id), nodeCollection);
+        }); 
+
+        it('deletes the given node\'s children from the collection', () => {
+            const nodeCollection = NodeCollection().add(Node({id: 'fj38j834'}));
+            const node = Node({id: '892j9r'});
+            const child1 = Node({id: '223g433', parentID: node.id});
+            const child2 = Node({id: 'wwg43g3', parentID: node.id});
+            const grandchild = Node({id: 'dg8j8345', parentID: child1.id});
+            const collectionWithNewNode = nodeCollection.add(node).add(child1).add(child2).add(grandchild);
+            assert.deepStrictEqual(collectionWithNewNode.deleteByID(node.id), nodeCollection);
+        }); 
+
+        it('removes the node from its parent', () => {
+            const nodeCollection = NodeCollection().add(Node({id: '892j9r'}));
+            const child = Node({id: 'f3fg43g', parentID: '892j9r'});
+            const collectionWithNewNode = nodeCollection.add(child);
+            assert.deepStrictEqual(collectionWithNewNode.deleteByID(child.id), nodeCollection);
+        }); 
+
+        it('does nothing when the node doesn\'t exist', () => {
+            const nodeCollection = NodeCollection()
+            const node = Node({id: '892j9r'});
+            const collectionWithNewNode = nodeCollection.add(node);
+            assert.deepStrictEqual(collectionWithNewNode.deleteByID('no_id'), collectionWithNewNode);
+        }); 
+    });
+
     describe('updateTextByID', () => {
         it('updates the specified node\'s text', () => {
             const node = Node({id: '892j9r'});
             const nodeCollection = NodeCollection().add(node).updateTextByID(node.id, 'new text');
-            assert.deepStrictEqual(nodeCollection[node.id].text, 'new text');
+            assert.equal(nodeCollection[node.id].text, 'new text');
         }); 
 
         it('does nothing when the node doesn\'t exist', () => {

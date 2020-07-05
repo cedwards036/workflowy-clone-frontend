@@ -3,6 +3,7 @@ import Node from './node';
 import {renderTree, renderNodePath} from './render';
 
 const ENTER = 13;
+const BACKSPACE = 8;
 const TAB = 9;
 const UP_ARROW = 38;
 const RIGHT_ARROW = 39;
@@ -78,6 +79,12 @@ export function addEventListeners(state) {
             } else if (e.altKey && e.keyCode === LEFT_ARROW) {
                 e.preventDefault();
                 zoomOut(state);
+            //backspace to delete nodes with no text content
+            } else if (e.keyCode === BACKSPACE) {
+                deleteNodeIfEmpty(nodeID, state);
+                if (nodeIsAbsent(nodeID)) {
+                    e.preventDefault();
+                }
             }
         }
     });
@@ -162,6 +169,15 @@ function moveCursorDown(nodeID, state) {
     moveCursorToBeginningOfNode(nextID, state);
 }
 
+function deleteNodeIfEmpty(nodeID, state) {
+    if ((nodeID !== state.currentRootID) && state.nodeCollection[nodeID].text === '') {
+        const nextID = state.nodeCollection.getNextUpID(nodeID);
+        state.nodeCollection = state.nodeCollection.deleteByID(nodeID);
+        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+        moveCursorToEndOfNode(nextID, state);
+    }
+}
+
 function zoomIn(nodeID, state) {
     history.pushState(null, null, `/#/${nodeID}`);
     renderTree(state.nodeCollection.buildTree(nodeID));
@@ -212,8 +228,28 @@ function moveCursorToBeginningOfNode(nodeID, state) {
     } 
 }
 
+function moveCursorToEndOfNode(nodeID, state) {
+    if (state.nodeCollection.hasOwnProperty(nodeID)) {
+        const node = getNodeElementByID(nodeID);
+        if (node !== null) {
+            const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
+            nodeText.focus();
+            const range = document.createRange();
+            range.selectNodeContents(nodeText);
+            range.collapse(false);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } 
+    } 
+}
+
 function getNodeElementByID(nodeID) {
     return document.querySelector(`[data-id='${nodeID}']`);
+}
+
+function nodeIsAbsent(nodeID) {
+    return getNodeElementByID(nodeID) === null;
 }
 
 export function loadNodeURL(url, state) {
