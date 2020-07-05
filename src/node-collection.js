@@ -10,7 +10,7 @@ NodeCollection.prototype = {
     add(node) {
         return produce(this, draft => {
             draft[node.id] = node;
-            if (draft.hasOwnProperty(node.parentID)) {
+            if (draft.hasOwnProperty(node.parentID) && !draft[node.parentID].childIDs.includes(node.id)) {
                 draft[node.parentID].childIDs.push(node.id);
             }
         });

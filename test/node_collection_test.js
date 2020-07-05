@@ -17,6 +17,13 @@ describe('NodeCollection', () => {
             const nodeCollection = NodeCollection().add(parent).add(child);
             assert.deepStrictEqual(nodeCollection[parent.id].childIDs, [child.id]);
         });
+
+        it('does not add the node\'s id to its parent if the parent already knows about the node', () => {
+            const parent = Node({id: '892j9r', childIDs: ['338ghf4']});
+            const child = Node({id: '338ghf4', parentID: parent.id});
+            const nodeCollection = NodeCollection().add(parent).add(child);
+            assert.deepStrictEqual(nodeCollection[parent.id].childIDs, [child.id]);
+        });
     });
 
     describe('addAsNthChild', () => {
