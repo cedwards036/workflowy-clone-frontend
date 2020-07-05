@@ -41,9 +41,11 @@ export default function addEventListeners(state) {
                     e.preventDefault();
                     return false;
                 }
+            //up arrow to navigate upward
             } else if (e.keyCode === UP_ARROW) {
                 e.preventDefault();
                 moveCursorUp(nodeID, state);
+            //down arrow to navigate downward
             } else if (e.keyCode === DOWN_ARROW) {
                 e.preventDefault();
                 moveCursorDown(nodeID, state);
@@ -107,28 +109,23 @@ function moveCursorDown(nodeID, state) {
 
 function maintainCursorThroughAction(action, nodeID, state) {
     const oldStartOffset = window.getSelection().getRangeAt(0).cloneRange().startOffset;
-
     action(nodeID, state);
-
     const alteredNode = getNodeElementByID(nodeID);
     const nodeText = alteredNode.querySelector('.node-text');
     nodeText.focus();
-    const newRange = new Range();
-    newRange.setStart(nodeText.firstChild, oldStartOffset);
-    newRange.collapse(true);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(newRange);
+    if (oldStartOffset !== 0) {
+        const newRange = new Range();
+        newRange.setStart(nodeText.firstChild, oldStartOffset);
+        newRange.collapse(true);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(newRange);
+    }
 }
 
 function moveCursorToBeginningOfNode(nodeID, state) {
     if (state.nodeCollection.hasOwnProperty(nodeID)) {
         const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
         nodeText.focus();
-        const newRange = new Range();
-        newRange.setStart(nodeText.firstChild, 0);
-        newRange.collapse(true);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(newRange);
     } 
 }
 
