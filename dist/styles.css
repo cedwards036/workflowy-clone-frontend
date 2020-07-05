@@ -1,6 +1,11 @@
 :root {
-    --main-text-color: #4B5155;
-    --light-text-color: #A0A0A0;
+    --main-text-color: rgb(255, 255, 255, 0.87);
+    --secondary-text-color:  rgb(255, 255, 255, 0.60);
+    --disabled-text-color:  rgb(255, 255, 255, 0.38);
+}
+
+body {
+    background-color: #121212;
 }
 
 [contenteditable] {
@@ -21,8 +26,9 @@
 }
 
 .node-arrow {
-    color: var(--light-text-color);
+    color: var(--secondary-text-color);
     cursor: pointer;
+    font-size: 0.75em;
 }
 
 .node-arrow:hover {
@@ -32,6 +38,16 @@
 .node-bullet {
     padding-left: 5px;
     cursor: pointer;
+    text-decoration: none;
+    color: var(--secondary-text-color);
+}
+
+.node-bullet:visited {
+    color: inherit;
+}
+
+.node-bullet:hover {
+    color: var(--main-text-color);
 }
 
 .node-text {
@@ -46,7 +62,7 @@
 
 .completed .node-text {
     text-decoration: line-through;
-    color: var(--light-text-color);
+    color: var(--disabled-text-color);
 }
 
 .path-link, .path-link:visited {
@@ -60,7 +76,7 @@
 }
 
 #nodePath {
-    color: var(--light-text-color);
+    color: var(--secondary-text-color);
     font-size: 0.75em;
 }
 

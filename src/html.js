@@ -33,7 +33,7 @@ export default {
         return `
             <div class="node-row">
                 <div class="node-arrow noselect">${this.nodeArrow(node)}</div>
-                <div class="node-bullet noselect">${DOT}</div>
+                <a href="/#/${node.id}" class="node-bullet noselect">${DOT}</a>
                 <div class="node-text" contenteditable="true" tabindex="-1">${node.text}</div>
             </div>
         `;

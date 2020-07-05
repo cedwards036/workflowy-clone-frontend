@@ -20,10 +20,16 @@ export function addEventListeners(state) {
     });
 
     document.getElementById('list').addEventListener('click', (e) => {
+        const nodeElement = e.target.closest('.node');
+        const nodeID = nodeElement.dataset.id;
         if (e.target.classList.contains('node-arrow')) {
-            const nodeElement = e.target.closest('.node');
-            const nodeID = nodeElement.dataset.id;
             handleArrowClick(nodeElement, nodeID, state);
+        }
+
+        if (e.target.classList.contains('node-bullet')) {
+            e.preventDefault();
+            loadNodeURL(e.target.href, state);
+            history.pushState(null, null, e.target.href);
         }
     });
 
