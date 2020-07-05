@@ -80,6 +80,7 @@ function addSiblingNode(nodeID, state) {
     const newNode = Node({id: newNodeID, parentID: parentID});
     state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, newNodeIndex); 
     renderTree(state.nodeCollection.buildTree(state.rootNodeID));
+    moveCursorToBeginningOfNode(newNode.id, state);
 }
 
 function indentNode(nodeID, state) {
