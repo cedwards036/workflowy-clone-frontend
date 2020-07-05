@@ -2,14 +2,44 @@
     --main-text-color: rgb(255, 255, 255, 0.87);
     --secondary-text-color:  rgb(255, 255, 255, 0.60);
     --disabled-text-color:  rgb(255, 255, 255, 0.38);
+    --background-color:  #121212;
+    --list-card-color:  #000000;
 }
 
 body {
-    background-color: #121212;
+    background-color: var(--background-color);
+    font-family: sans-serif;
+}
+
+#header {
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    color: var(--main-text-color);
+}
+
+h1 a, a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+#list {
+    margin: auto;
+    width: 700px;
+    min-height: 700px;
+    padding: 30px;
+    background-color: var(--list-card-color);
+    border-radius: 25px;
 }
 
 [contenteditable] {
     outline: 0px solid transparent;
+}
+
+.node {
+    margin: 5px 0px 5px 0px;
 }
 
 .node-children {
@@ -53,7 +83,6 @@ body {
 .node-text {
     padding-left: 5px;
     min-width: 150px;
-    font-family: sans-serif;
 }
 
 .root-text {
@@ -66,7 +95,6 @@ body {
 }
 
 .path-link, .path-link:visited {
-    font-family: sans-serif;
     text-decoration: none;
     color: inherit;
 }
@@ -78,6 +106,9 @@ body {
 #nodePath {
     color: var(--secondary-text-color);
     font-size: 0.75em;
+    margin: auto;
+    width: 700px;
+    padding: 10px 0px 10px 0px;
 }
 
 .hidden {
