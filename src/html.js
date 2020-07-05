@@ -57,5 +57,11 @@ export default {
 
     expandedClass(node) {
         return node.isExpanded ? '' : 'hidden';
+    },
+
+    forNodePath(nodePath, nodeCollection) {
+        return nodePath.reverse().map(nodeID => {
+            return `<a href="/#/${nodeID}" class="path-link">${nodeCollection[nodeID].text}</a>`
+        }).join('  >  ');
     }
 }

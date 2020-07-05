@@ -105,7 +105,7 @@ NodeCollection.prototype = {
             return [];
         } else {
             let node = this[nodeID];
-            const ancestorIDs = [];
+            const ancestorIDs = [nodeID];
             while (this.hasOwnProperty(node.parentID)) {
                 ancestorIDs.push(node.parentID);
                 node = this[node.parentID];

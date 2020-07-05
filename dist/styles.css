@@ -1,3 +1,8 @@
+:root {
+    --main-text-color: #4B5155;
+    --light-text-color: #A0A0A0;
+}
+
 [contenteditable] {
     outline: 0px solid transparent;
 }
@@ -12,16 +17,16 @@
 
 .node-row {
     display: flex;
-    color: #4B5155;
+    color: var(--main-text-color);
 }
 
 .node-arrow {
-    color: lightgray;
+    color: var(--light-text-color);
     cursor: pointer;
 }
 
 .node-arrow:hover {
-    color: #4B5155;
+    color: var(--main-text-color);
 }
 
 .node-bullet {
@@ -41,7 +46,22 @@
 
 .completed .node-text {
     text-decoration: line-through;
-    color: lightgray;
+    color: var(--light-text-color);
+}
+
+.path-link, .path-link:visited {
+    font-family: sans-serif;
+    text-decoration: none;
+    color: inherit;
+}
+
+.path-link:hover {
+    color: var(--main-text-color);
+}
+
+#nodePath {
+    color: var(--light-text-color);
+    font-size: 0.75em;
 }
 
 .hidden {

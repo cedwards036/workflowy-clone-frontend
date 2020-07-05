@@ -265,17 +265,17 @@ describe('NodeCollection', () => {
 
     describe('getAncestorIDs', () => {
         describe('when the collection contains the node ID', () => {
-            it('returns an empty array when the node has no ancestors', () => {
+            it('returns an array with just the current node if the node has no ancestors', () => {
                 const node = Node({id: '116h44'});
                 const nodeCollection = NodeCollection().add(node);
-                assert.deepStrictEqual(nodeCollection.getAncestorIDs(node.id), []);
+                assert.deepStrictEqual(nodeCollection.getAncestorIDs(node.id), [node.id]);
             });
     
-            it('returns an array with the node\'s parent when the node has a single ancestor', () => {
+            it('returns an array including the node\'s parent when the node has a single ancestor', () => {
                 const parent = Node({id: '892j9r'});
                 const child = Node({id: '338ghf4', parentID: parent.id});
                 const nodeCollection = NodeCollection().add(parent).add(child);
-                assert.deepStrictEqual(nodeCollection.getAncestorIDs(child.id), [parent.id]);
+                assert.deepStrictEqual(nodeCollection.getAncestorIDs(child.id), [child.id, parent.id]);
             });
     
             it('returns an array with the node\'s ancestors from closest to most distant', () => {
@@ -283,7 +283,7 @@ describe('NodeCollection', () => {
                 const parent = Node({id: '892j9r', parentID: grandparent.id});
                 const child = Node({id: '338ghf4', parentID: parent.id});
                 const nodeCollection = NodeCollection().add(grandparent).add(parent).add(child);
-                assert.deepStrictEqual(nodeCollection.getAncestorIDs(child.id), [parent.id, grandparent.id]);
+                assert.deepStrictEqual(nodeCollection.getAncestorIDs(child.id), [child.id, parent.id, grandparent.id]);
             });
         });
 

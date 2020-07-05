@@ -1,6 +1,6 @@
 import HTML from './html';
 import Node from './node';
-import {renderTree} from './render';
+import {renderTree, renderNodePath} from './render';
 
 const ENTER = 13;
 const TAB = 9;
@@ -9,11 +9,20 @@ const RIGHT_ARROW = 39;
 const DOWN_ARROW = 40;
 const LEFT_ARROW = 37;
 
-export default function addEventListeners(state) {
+export function addEventListeners(state) {
+
+    document.getElementById('nodePath').addEventListener('click', (e) => {
+        if (e.target.classList.contains('path-link')) {
+            e.preventDefault();
+            loadNodeURL(e.target.href, state);
+            history.pushState(null, null, e.target.href);
+        }
+    });
+
     document.getElementById('list').addEventListener('click', (e) => {
-        const nodeElement = e.target.closest('.node');
-        const nodeID = nodeElement.dataset.id;
         if (e.target.classList.contains('node-arrow')) {
+            const nodeElement = e.target.closest('.node');
+            const nodeID = nodeElement.dataset.id;
             handleArrowClick(nodeElement, nodeID, state);
         }
     });
@@ -82,6 +91,14 @@ export default function addEventListeners(state) {
             e.preventDefault();
         }
     });
+
+    window.addEventListener('hashchange', (e) => {
+        loadNodeURL(location.hash, state);
+    });
+
+    window.addEventListener('popstate', (e) => {
+        loadNodeURL(location.hash, state);
+    });
 }
 
 function handleArrowClick(nodeElement, nodeID, state) {
@@ -140,8 +157,10 @@ function moveCursorDown(nodeID, state) {
 }
 
 function zoomIn(nodeID, state) {
+    history.pushState(null, null, `/#/${nodeID}`);
     renderTree(state.nodeCollection.buildTree(nodeID));
     state.currentRootID = nodeID;
+    renderNodePath(state.currentRootID, state.nodeCollection);
     const newRootNode = state.nodeCollection[nodeID];
     if (newRootNode.childIDs.length > 0) {
         moveCursorToBeginningOfNode(newRootNode.childIDs[0], state);
@@ -154,8 +173,10 @@ function zoomOut(state) {
     const oldRoot = state.nodeCollection[state.currentRootID];
     const rootParentID = oldRoot.parentID;
     if (state.nodeCollection.hasOwnProperty(rootParentID)) {
+        history.pushState(null, null, `/#/${rootParentID}`);
         renderTree(state.nodeCollection.buildTree(rootParentID));
         state.currentRootID = rootParentID;
+        renderNodePath(state.currentRootID, state.nodeCollection);
         moveCursorToBeginningOfNode(oldRoot.id, state);
     }
 }
@@ -187,4 +208,12 @@ function moveCursorToBeginningOfNode(nodeID, state) {
 
 function getNodeElementByID(nodeID) {
     return document.querySelector(`[data-id='${nodeID}']`);
+}
+
+export function loadNodeURL(url, state) {
+    const nodeID = url.split('/').pop();
+    renderTree(state.nodeCollection.buildTree(nodeID));
+    state.currentRootID = nodeID;
+    renderNodePath(state.currentRootID, state.nodeCollection);
+    moveCursorToBeginningOfNode(nodeID, state);
 }

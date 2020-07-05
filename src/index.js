@@ -1,7 +1,6 @@
 import Node from './node';
 import NodeCollection from './node-collection';
-import {renderTree} from './render';
-import addEventListeners from './event-listeners';
+import {addEventListeners, loadNodeURL} from './event-listeners';
 
 window.onload = e => {
     const state = {nodeCollection: null, rootNodeID: '', currentRootID: ''};
@@ -16,5 +15,9 @@ window.onload = e => {
     state.nodeCollection = nodeCollection; 
     state.rootNodeID = 'f983jf'; 
     state.currentRootID = 'f983jf'; 
-    renderTree(nodeTree);  
+    if (location.hash === '') {
+        loadNodeURL(`#/${state.rootNodeID}`, state);
+    } else {
+        loadNodeURL(location.hash, state);
+    }
 }
