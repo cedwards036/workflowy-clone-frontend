@@ -97,28 +97,12 @@ function updateNodeText(nodeElement, nodeID, state) {
 
 function moveCursorUp(nodeID, state) {
     const nextID = state.nodeCollection.getNextUpID(nodeID);
-    if (state.nodeCollection.hasOwnProperty(nextID)) {
-        const nextNodeText = getNodeElementByID(nextID).querySelector('.node-text');
-        nextNodeText.focus();
-        const newRange = new Range();
-        newRange.setStart(nextNodeText.firstChild, 0);
-        newRange.collapse(true);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(newRange);
-    } 
+    moveCursorToBeginningOfNode(nextID, state);
 }
 
 function moveCursorDown(nodeID, state) {
     const nextID = state.nodeCollection.getNextDownID(nodeID);
-    if (state.nodeCollection.hasOwnProperty(nextID)) {
-        const nextNodeText = getNodeElementByID(nextID).querySelector('.node-text');
-        nextNodeText.focus();
-        const newRange = new Range();
-        newRange.setStart(nextNodeText.firstChild, 0);
-        newRange.collapse(true);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(newRange);
-    } 
+    moveCursorToBeginningOfNode(nextID, state);
 }
 
 function maintainCursorThroughAction(action, nodeID, state) {
@@ -134,6 +118,18 @@ function maintainCursorThroughAction(action, nodeID, state) {
     newRange.collapse(true);
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(newRange);
+}
+
+function moveCursorToBeginningOfNode(nodeID, state) {
+    if (state.nodeCollection.hasOwnProperty(nodeID)) {
+        const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
+        nodeText.focus();
+        const newRange = new Range();
+        newRange.setStart(nodeText.firstChild, 0);
+        newRange.collapse(true);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(newRange);
+    } 
 }
 
 function getNodeElementByID(nodeID) {
