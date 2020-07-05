@@ -4,6 +4,8 @@ import {renderTree} from './render';
 
 const ENTER = 13;
 const TAB = 9;
+const UP_ARROW = 38;
+const DOWN_ARROW = 40;
 
 export default function addEventListeners(state) {
     document.getElementById('list').addEventListener('click', (e) => {
@@ -39,6 +41,12 @@ export default function addEventListeners(state) {
                     e.preventDefault();
                     return false;
                 }
+            } else if (e.keyCode === UP_ARROW) {
+                e.preventDefault();
+                moveCursorUp(nodeID, state);
+            } else if (e.keyCode === DOWN_ARROW) {
+                e.preventDefault();
+                moveCursorDown(nodeID, state);
             }
         }
     });
@@ -85,6 +93,32 @@ function unindentNode(nodeID, state) {
 function updateNodeText(nodeElement, nodeID, state) {
     const newText = nodeElement.querySelector('.node-text').innerText;
     state.nodeCollection = state.nodeCollection.updateTextByID(nodeID, newText);
+}
+
+function moveCursorUp(nodeID, state) {
+    const nextID = state.nodeCollection.getNextUpID(nodeID);
+    if (state.nodeCollection.hasOwnProperty(nextID)) {
+        const nextNodeText = getNodeElementByID(nextID).querySelector('.node-text');
+        nextNodeText.focus();
+        const newRange = new Range();
+        newRange.setStart(nextNodeText.firstChild, 0);
+        newRange.collapse(true);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(newRange);
+    } 
+}
+
+function moveCursorDown(nodeID, state) {
+    const nextID = state.nodeCollection.getNextDownID(nodeID);
+    if (state.nodeCollection.hasOwnProperty(nextID)) {
+        const nextNodeText = getNodeElementByID(nextID).querySelector('.node-text');
+        nextNodeText.focus();
+        const newRange = new Range();
+        newRange.setStart(nextNodeText.firstChild, 0);
+        newRange.collapse(true);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(newRange);
+    } 
 }
 
 function maintainCursorThroughAction(action, nodeID, state) {

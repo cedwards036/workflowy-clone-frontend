@@ -147,6 +147,102 @@ describe('NodeCollection', () => {
         }); 
     });
 
+    describe('getNextUpID', () => {
+        let root, node, nodeChild, nodeGrandchild, nodeSibling1, nodeSibling2, 
+            nodeSibling2Child, nodeSibling3, nodeCollection;
+        beforeEach(() => {
+            root = Node({id: '2634235', isExpanded: true});
+            node = Node({id: '892j9r', parentID: root.id, isExpanded: true});
+            nodeChild = Node({id: '543734', parentID: node.id, isExpanded: true});
+            nodeGrandchild = Node({id: 'f234hg4', parentID: nodeChild.id});
+            nodeSibling1 = Node({id: 'jttjre5', parentID: root.id});
+            nodeSibling2 = Node({id: '2t4t3t', parentID: root.id, isExpanded: false});
+            nodeSibling2Child = Node({id: 'd5h4dhr', parentID: nodeSibling2.id});
+            nodeSibling3 = Node({id: '43gh34', parentID: root.id, isExpanded: false});
+            nodeCollection = NodeCollection()
+                                    .add(root)
+                                    .add(node)
+                                    .add(nodeChild)
+                                    .add(nodeGrandchild)
+                                    .add(nodeSibling1)
+                                    .add(nodeSibling2)
+                                    .add(nodeSibling2Child)
+                                    .add(nodeSibling3);
+        });
+
+        it('returns the above sibling if that sibling has no children', () => {
+            assert.equal(nodeCollection.getNextUpID(nodeSibling2.id), nodeSibling1.id);
+        });
+
+        it('returns the deepest child of the above sibling if that sibling has children', () => {
+            assert.equal(nodeCollection.getNextUpID(nodeSibling1.id), nodeGrandchild.id);
+        });
+
+        it('returns the node\'s parent if the node has no above siblings', () => {
+            assert.equal(nodeCollection.getNextUpID(nodeChild.id), node.id);
+        });
+
+        it('ignores nodes whose parents are not expanded', () => {
+            assert.equal(nodeCollection.getNextUpID(nodeSibling3.id), nodeSibling2.id);
+        });
+
+        it('returns an empty string if the node doesn\'t exist', () => {
+            assert.equal(nodeCollection.getNextUpID('unknown_id'), '');
+        });
+
+        it('returns an empty string if the node has no parents', () => {
+            assert.equal(nodeCollection.getNextUpID(root.id), '');
+        });
+    });
+
+    describe('getNextDownID', () => {
+        let root, node, nodeChild, nodeGrandchild, nodeSibling1, nodeSibling2, 
+            nodeSibling2Child, nodeSibling3, nodeCollection;
+        beforeEach(() => {
+            root = Node({id: '2634235', isExpanded: true});
+            node = Node({id: '892j9r', parentID: root.id, isExpanded: true});
+            nodeChild = Node({id: '543734', parentID: node.id, isExpanded: true});
+            nodeGrandchild = Node({id: 'f234hg4', parentID: nodeChild.id});
+            nodeSibling1 = Node({id: 'jttjre5', parentID: root.id});
+            nodeSibling2 = Node({id: '2t4t3t', parentID: root.id, isExpanded: false});
+            nodeSibling2Child = Node({id: 'd5h4dhr', parentID: nodeSibling2.id});
+            nodeSibling3 = Node({id: '43gh34', parentID: root.id, isExpanded: false});
+            nodeCollection = NodeCollection()
+                                    .add(root)
+                                    .add(node)
+                                    .add(nodeChild)
+                                    .add(nodeGrandchild)
+                                    .add(nodeSibling1)
+                                    .add(nodeSibling2)
+                                    .add(nodeSibling2Child)
+                                    .add(nodeSibling3);
+        });
+
+        it('returns the below sibling if the node has no children', () => {
+            assert.equal(nodeCollection.getNextDownID(nodeSibling1.id), nodeSibling2.id);
+        });
+
+        it('returns the first child of the node if the node has children', () => {
+            assert.equal(nodeCollection.getNextDownID(node.id), nodeChild.id);
+        });
+
+        it('returns the next sibling of the lowest possible ancestor if the node has no children or siblings', () => {
+            assert.equal(nodeCollection.getNextDownID(nodeGrandchild.id), nodeSibling1.id);
+        });
+
+        it('ignores child nodes if the node is not expanded', () => {
+            assert.equal(nodeCollection.getNextDownID(nodeSibling2.id), nodeSibling3.id);
+        });
+
+        it('returns an empty string if the node doesn\'t exist', () => {
+            assert.equal(nodeCollection.getNextDownID('unknown_id'), '');
+        });
+
+        it('returns an empty string if the node is the bottom node of the collection', () => {
+            assert.equal(nodeCollection.getNextDownID(nodeSibling3.id), '');
+        });
+    });
+
     describe('getAncestorIDs', () => {
         describe('when the collection contains the node ID', () => {
             it('returns an empty array when the node has no ancestors', () => {

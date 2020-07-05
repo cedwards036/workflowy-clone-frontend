@@ -123,6 +123,48 @@ NodeCollection.prototype = {
         });
     },
 
+    getNextUpID(nodeID) {
+        if (!this.hasValidParent(nodeID)) {
+            return '';
+        } else {
+            const parent = this[this[nodeID].parentID];
+            const indexInParent = parent.childIDs.indexOf(nodeID);
+            if (indexInParent === 0) {
+                return parent.id;
+            } else {
+                const nearestAboveSibling = this[parent.childIDs[indexInParent - 1]];
+                let nextUp = nearestAboveSibling;
+                while (nextUp.childIDs.length !== 0 && nextUp.isExpanded) {
+                    nextUp = this[nextUp.childIDs.slice(-1)[0]];
+                }
+                return nextUp.id;
+            }
+        } 
+    },
+
+    getNextDownID(nodeID) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return '';
+        } else {
+            const node = this[nodeID];
+            if (node.childIDs.length > 0 && node.isExpanded) {
+                return node.childIDs[0];
+            } else {
+                let curNode = node;
+                while (this.hasValidParent(curNode.id)) {
+                    const parent = this[curNode.parentID];
+                    const indexInParent = parent.childIDs.indexOf(curNode.id);
+                    if (indexInParent === parent.childIDs.length - 1) {
+                        curNode = parent;
+                    } else {
+                        return parent.childIDs[indexInParent + 1];
+                    }
+                }
+                return '';
+            }  
+        } 
+    },
+
     hasValidParent(nodeID) {
         return this.hasOwnProperty(nodeID) && 
                this.hasOwnProperty(this[nodeID].parentID);
