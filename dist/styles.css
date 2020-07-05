@@ -2,8 +2,12 @@
     outline: 0px solid transparent;
 }
 
-.node {
+.node-children {
     margin-left: 30px;
+}
+
+.root-children {
+    margin-left: 0px;
 }
 
 .node-row {
@@ -29,6 +33,10 @@
     padding-left: 5px;
     min-width: 150px;
     font-family: sans-serif;
+}
+
+.root-text {
+    font-size: 2em;
 }
 
 .completed .node-text {

@@ -5,7 +5,9 @@ import {renderTree} from './render';
 const ENTER = 13;
 const TAB = 9;
 const UP_ARROW = 38;
+const RIGHT_ARROW = 39;
 const DOWN_ARROW = 40;
+const LEFT_ARROW = 37;
 
 export default function addEventListeners(state) {
     document.getElementById('list').addEventListener('click', (e) => {
@@ -26,7 +28,11 @@ export default function addEventListeners(state) {
                     toggleNodeCompletion(nodeElement, nodeID, state);
                 //plain enter to add new sibling node
                 } else {
-                    addSiblingNode(nodeID, state);
+                    if (nodeID === state.currentRootID) {
+                        addChildNode(nodeID, state);
+                    } else {
+                        addSiblingNode(nodeID, state);
+                    }
                     e.preventDefault();
                 }
             } else if (e.keyCode === TAB) {
@@ -49,6 +55,14 @@ export default function addEventListeners(state) {
             } else if (e.keyCode === DOWN_ARROW) {
                 e.preventDefault();
                 moveCursorDown(nodeID, state);
+            //alt-right arrow to zoom in to a node
+            } else if (e.altKey && e.keyCode === RIGHT_ARROW) {
+                e.preventDefault();
+                zoomIn(nodeID, state);
+            //alt-left arrow to zoom out to the node's parent
+            } else if (e.altKey && e.keyCode === LEFT_ARROW) {
+                e.preventDefault();
+                zoomOut(state);
             }
         }
     });
@@ -56,8 +70,16 @@ export default function addEventListeners(state) {
     document.getElementById('list').addEventListener('input', (e) => {
         const nodeElement = e.target.closest('.node');
         const nodeID = nodeElement.dataset.id;
+        //keep data model up to date with node text
         if (e.target.classList.contains('node-text')) {
             updateNodeText(nodeElement, nodeID, state);
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        //stop default alt-arrow back/forward page navigation
+        if (e.altKey && (e.keyCode === LEFT_ARROW || e.keyCode === RIGHT_ARROW)) {
+            e.preventDefault();
         }
     });
 }
@@ -79,18 +101,27 @@ function addSiblingNode(nodeID, state) {
     const newNodeID = Math.floor(Math.random() * 1000000).toString();
     const newNode = Node({id: newNodeID, parentID: parentID});
     state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, newNodeIndex); 
-    renderTree(state.nodeCollection.buildTree(state.rootNodeID));
+    renderTree(state.nodeCollection.buildTree(state.currentRootID));
+    moveCursorToBeginningOfNode(newNode.id, state);
+}
+
+function addChildNode(nodeID, state) {
+    const newNodeID = Math.floor(Math.random() * 1000000).toString();
+    const newNode = Node({id: newNodeID, parentID: nodeID});
+    state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, 0);
+    state.nodeCollection = state.nodeCollection.expandByID(nodeID);
+    renderTree(state.nodeCollection.buildTree(state.currentRootID));
     moveCursorToBeginningOfNode(newNode.id, state);
 }
 
 function indentNode(nodeID, state) {
     state.nodeCollection = state.nodeCollection.indent(nodeID);
-    renderTree(state.nodeCollection.buildTree(state.rootNodeID));
+    renderTree(state.nodeCollection.buildTree(state.currentRootID));
 }
 
 function unindentNode(nodeID, state) {
     state.nodeCollection = state.nodeCollection.unindent(nodeID);
-    renderTree(state.nodeCollection.buildTree(state.rootNodeID));
+    renderTree(state.nodeCollection.buildTree(state.currentRootID));
 }
 
 function updateNodeText(nodeElement, nodeID, state) {
@@ -106,6 +137,27 @@ function moveCursorUp(nodeID, state) {
 function moveCursorDown(nodeID, state) {
     const nextID = state.nodeCollection.getNextDownID(nodeID);
     moveCursorToBeginningOfNode(nextID, state);
+}
+
+function zoomIn(nodeID, state) {
+    renderTree(state.nodeCollection.buildTree(nodeID));
+    state.currentRootID = nodeID;
+    const newRootNode = state.nodeCollection[nodeID];
+    if (newRootNode.childIDs.length > 0) {
+        moveCursorToBeginningOfNode(newRootNode.childIDs[0], state);
+    } else {
+        moveCursorToBeginningOfNode(newRootNode.id, state);
+    }
+}
+
+function zoomOut(state) {
+    const oldRoot = state.nodeCollection[state.currentRootID];
+    const rootParentID = oldRoot.parentID;
+    if (state.nodeCollection.hasOwnProperty(rootParentID)) {
+        renderTree(state.nodeCollection.buildTree(rootParentID));
+        state.currentRootID = rootParentID;
+        moveCursorToBeginningOfNode(oldRoot.id, state);
+    }
 }
 
 function maintainCursorThroughAction(action, nodeID, state) {
@@ -125,8 +177,11 @@ function maintainCursorThroughAction(action, nodeID, state) {
 
 function moveCursorToBeginningOfNode(nodeID, state) {
     if (state.nodeCollection.hasOwnProperty(nodeID)) {
-        const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
-        nodeText.focus();
+        const node = getNodeElementByID(nodeID);
+        if (node !== null) {
+            const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
+            nodeText.focus();
+        } 
     } 
 }
 

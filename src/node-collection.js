@@ -80,6 +80,16 @@ NodeCollection.prototype = {
         }
     },
 
+    expandByID(nodeID) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return this;
+        } else {
+            return produce(this, draft => {
+                draft[nodeID] = draft[nodeID].expand();
+            }); 
+        }
+    },
+
     updateTextByID(nodeID, newText) {
         if (!this.hasOwnProperty(nodeID)) {
             return this;

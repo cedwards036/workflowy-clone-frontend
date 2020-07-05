@@ -133,6 +133,26 @@ describe('NodeCollection', () => {
         }); 
     });
 
+    describe('toggleExpandedByID', () => {
+        it('expands the specified node if it is collapsed', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node).expandByID(node.id);
+            assert.deepStrictEqual(nodeCollection[node.id].isExpanded, true);
+        }); 
+
+        it('does nothing if the node is already expanded', () => {
+            const node = Node({id: '892j9r', isExpanded: true});
+            const nodeCollection = NodeCollection().add(node).expandByID(node.id);
+            assert.deepStrictEqual(nodeCollection[node.id].isExpanded, true);
+        }); 
+
+        it('does nothing when the node doesn\'t exist', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node);
+            assert.deepStrictEqual(nodeCollection.expandByID(''), nodeCollection);
+        }); 
+    });
+
     describe('updateTextByID', () => {
         it('updates the specified node\'s text', () => {
             const node = Node({id: '892j9r'});

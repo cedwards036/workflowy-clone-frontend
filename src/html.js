@@ -3,11 +3,28 @@ const DOWN_ARROW = '&#9660;';
 const DOT = '&#9679;';
 
 export default {
-    forNodeTree(rootNode) {
+    forRootNodeTree(rootNode) {
         return `
             <div data-id="${rootNode.id}" class="node ${this.completedClass(rootNode)}">
-                ${this.forNodeRow(rootNode)}
-                ${this.forChildNodes(rootNode)}
+                ${this.forRootNodeRow(rootNode)}
+                ${this.forChildNodes(rootNode, 'root-children')}
+            </div>
+        `;
+    },
+
+    forNodeTree(node) {
+        return `
+            <div data-id="${node.id}" class="node ${this.completedClass(node)}">
+                ${this.forNodeRow(node)}
+                ${this.forChildNodes(node, 'node-children')}
+            </div>
+        `;
+    },
+
+    forRootNodeRow(node) {
+        return `
+            <div class="node-row">
+                <div class="node-text root-text" contenteditable="true" tabindex="-1">${node.text}</div>
             </div>
         `;
     },
@@ -22,9 +39,9 @@ export default {
         `;
     },
 
-    forChildNodes(node) {
+    forChildNodes(node, childClass) {
         return `
-            <div class="node-children ${this.childrenClass(node)}">
+            <div class="${childClass} ${this.expandedClass(node)}">
                 ${node.children.map(child => this.forNodeTree(child)).join('')}
             </div>
         `;
@@ -38,7 +55,7 @@ export default {
         return node.isCompleted ? 'completed' : '';
     },
 
-    childrenClass(node) {
+    expandedClass(node) {
         return node.isExpanded ? '' : 'hidden';
     }
 }
