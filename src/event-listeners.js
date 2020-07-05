@@ -218,6 +218,7 @@ function getNodeElementByID(nodeID) {
 
 export function loadNodeURL(url, state) {
     const nodeID = url.split('/').pop();
+    state.nodeCollection = state.nodeCollection.expandByID(nodeID);
     renderTree(state.nodeCollection.buildTree(nodeID));
     state.currentRootID = nodeID;
     renderNodePath(state.currentRootID, state.nodeCollection);
