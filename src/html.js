@@ -33,7 +33,7 @@ export default {
     forNodeRow(node) {
         return `
             <div class="node-row">
-                <div class="node-arrow noselect">${this.nodeArrow(node)}</div>
+                ${this.arrowDiv(node)}
                 <a href="${name}/#/${node.id}" class="node-bullet noselect">${DOT}</a>
                 <div class="node-text" contenteditable="true" tabindex="-1">${node.text}</div>
             </div>
@@ -46,6 +46,14 @@ export default {
                 ${node.children.map(child => this.forNodeTree(child)).join('')}
             </div>
         `;
+    },
+
+    arrowDiv(node) {
+        if (node.childIDs.length > 0) {
+            return `<div class="node-arrow noselect">${this.nodeArrow(node)}</div>`;
+        } else {
+            return `<div class="no-node-arrow noselect"></div>`;
+        }
     },
 
     nodeArrow(node) {
