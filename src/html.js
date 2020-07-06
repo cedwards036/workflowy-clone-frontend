@@ -1,7 +1,6 @@
 const RIGHT_ARROW = '&#9654;';
 const DOWN_ARROW = '&#9660;';
 const DOT = '&#9679;';
-import {name} from '../package.json';
 
 export default {
     forRootNodeTree(rootNode) {
@@ -34,7 +33,7 @@ export default {
         return `
             <div class="node-row">
                 ${this.arrowDiv(node)}
-                <a href="${name}/#/${node.id}" class="node-bullet noselect">${DOT}</a>
+                <a href="/#/${node.id}" class="node-bullet noselect">${DOT}</a>
                 <div class="node-text" contenteditable="true" tabindex="-1">${node.text}</div>
             </div>
         `;
@@ -70,7 +69,7 @@ export default {
 
     forNodePath(nodePath, nodeCollection) {
         return nodePath.reverse().map(nodeID => {
-            return `<a href="${name}/#/${nodeID}" class="path-link">${nodeCollection[nodeID].text}</a>`
+            return `<a href="/#/${nodeID}" class="path-link">${nodeCollection[nodeID].text}</a>`
         }).join('  >  ');
     }
 }
