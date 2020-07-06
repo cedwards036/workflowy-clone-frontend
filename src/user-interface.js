@@ -92,6 +92,15 @@ export function addEventListeners(list) {
         }
     });
 
+    document.addEventListener('keydown', (e) => {
+        if (e.keyCode === ENTER) {
+            if (!e.target.classList.contains('node-text')) {
+                addChildNode(list.currentRootID, list);
+                e.preventDefault();
+            }
+        }
+    });
+
     document.getElementById('list').addEventListener('input', (e) => {
         const nodeElement = e.target.closest('.node');
         const nodeID = nodeElement.dataset.id;
