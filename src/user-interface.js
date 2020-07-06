@@ -222,6 +222,7 @@ function deleteNodeIfEmpty(nodeID, list) {
 function zoomIn(nodeID, list) {
     history.pushState(null, null, `/#/${nodeID}`);
     list.currentRootID = nodeID;
+    list.nodes = list.nodes.expandByID(nodeID);
     list.renderTree(listElement);
     list.renderNodePath(nodePathElement);
     const newRootNode = list.getNode(nodeID);

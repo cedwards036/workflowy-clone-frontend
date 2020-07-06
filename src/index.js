@@ -1,4 +1,4 @@
-import {addEventListeners, loadNodeURL} from './event-listeners';
+import {addEventListeners, loadNodeURL} from './user-interface';
 import {getList, parseGetListResponse} from './api-interface';
 
 window.onload = () => {
