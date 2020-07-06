@@ -49,7 +49,7 @@ h1 a, a:visited {
 #list {
     margin: auto;
     width: 700px;
-    min-height: 700px;
+    min-height: 680px;
     padding: 30px;
     background-color: var(--list-card-color);
     border-radius: 25px;
@@ -119,6 +119,12 @@ h1 a, a:visited {
 .completed .node-text {
     text-decoration: line-through;
     color: var(--disabled-text-color);
+}
+
+footer {
+    color: var(--secondary-text-color);
+    text-align: center;
+    margin: 20px;
 }
 
 .hidden {
