@@ -2,6 +2,7 @@ import HTML from './html';
 import Node from './node';
 import {renderTree, renderNodePath} from './render';
 import {createNode, updateNode, deleteNode} from './api-interface';
+import {name} from '../package.json';
 
 const ENTER = 13;
 const BACKSPACE = 8;
@@ -205,7 +206,7 @@ function deleteNodeIfEmpty(nodeID, state) {
 }
 
 function zoomIn(nodeID, state) {
-    history.pushState(null, null, `../#/${nodeID}`);
+    history.pushState(null, null, `${name}/#/${nodeID}`);
     renderTree(state.nodeCollection.buildTree(nodeID));
     state.currentRootID = nodeID;
     renderNodePath(state.currentRootID, state.nodeCollection);
@@ -221,7 +222,7 @@ function zoomOut(state) {
     const oldRoot = state.nodeCollection[state.currentRootID];
     const rootParentID = oldRoot.parentID;
     if (state.nodeCollection.hasOwnProperty(rootParentID)) {
-        history.pushState(null, null, `../#/${rootParentID}`);
+        history.pushState(null, null, `${name}/#/${rootParentID}`);
         renderTree(state.nodeCollection.buildTree(rootParentID));
         state.currentRootID = rootParentID;
         renderNodePath(state.currentRootID, state.nodeCollection);
