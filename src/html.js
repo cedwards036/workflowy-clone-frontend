@@ -33,7 +33,7 @@ export default {
         return `
             <div class="node-row">
                 <div class="node-arrow noselect">${this.nodeArrow(node)}</div>
-                <a href="../#/${node.id}" class="node-bullet noselect">${DOT}</a>
+                <a href="./#/${node.id}" class="node-bullet noselect">${DOT}</a>
                 <div class="node-text" contenteditable="true" tabindex="-1">${node.text}</div>
             </div>
         `;
@@ -61,7 +61,7 @@ export default {
 
     forNodePath(nodePath, nodeCollection) {
         return nodePath.reverse().map(nodeID => {
-            return `<a href="../#/${nodeID}" class="path-link">${nodeCollection[nodeID].text}</a>`
+            return `<a href="./#/${nodeID}" class="path-link">${nodeCollection[nodeID].text}</a>`
         }).join('  >  ');
     }
 }
