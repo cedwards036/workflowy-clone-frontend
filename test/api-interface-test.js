@@ -66,7 +66,8 @@ describe('parseGetListResponse', () => {
             nodeCollection: expectedCollection,
             showCompleted: false,
             currentRootID: "5eff5d2dfde52d0004ebd139",
-            tags: ['tag1', 'tag2', 'tag3']
+            tags: ['tag1', 'tag2', 'tag3'],
+            listID: '5eff5d2dfde52d0004ebd138'
         }
         assert.deepStrictEqual(parseGetListResponse(response), expected);
     });

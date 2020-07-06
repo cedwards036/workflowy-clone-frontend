@@ -1,6 +1,7 @@
 import HTML from './html';
 import Node from './node';
 import {renderTree, renderNodePath} from './render';
+import {createNode, updateNode, deleteNode} from './api-interface';
 
 const ENTER = 13;
 const BACKSPACE = 8;
@@ -21,9 +22,9 @@ export function addEventListeners(state) {
     });
 
     document.getElementById('list').addEventListener('click', (e) => {
-        const nodeElement = e.target.closest('.node');
-        const nodeID = nodeElement.dataset.id;
         if (e.target.classList.contains('node-arrow')) {
+            const nodeElement = e.target.closest('.node');
+            const nodeID = nodeElement.dataset.id;
             handleArrowClick(nodeElement, nodeID, state);
         }
 
@@ -98,6 +99,18 @@ export function addEventListeners(state) {
         }
     });
 
+    document.getElementById('list').addEventListener('focusout', (e) => {
+        const nodeElement = e.target.closest('.node');
+        const nodeID = nodeElement.dataset.id;
+        //send update request to server when user unfocuses node text field
+        if (e.target.classList.contains('node-text')) {
+            //don't update if the node was just deleted
+            if (state.nodeCollection.hasOwnProperty(nodeID)) {
+                updateNode(state.nodeCollection[nodeID], () => {});
+            }
+        }
+    });
+
     document.addEventListener('keydown', (e) => {
         //stop default alt-arrow back/forward page navigation
         if (e.altKey && (e.keyCode === LEFT_ARROW || e.keyCode === RIGHT_ARROW)) {
@@ -116,41 +129,51 @@ export function addEventListeners(state) {
 
 function handleArrowClick(nodeElement, nodeID, state) {
     state.nodeCollection = state.nodeCollection.toggleExpandedByID(nodeID);
+    updateNode(state.nodeCollection[nodeID], () => {});
     nodeElement.querySelector('.node-children').classList.toggle('hidden');
     nodeElement.querySelector('.node-arrow').innerHTML = HTML.nodeArrow(state.nodeCollection[nodeID]);
 }
 
 function toggleNodeCompletion(nodeElement, nodeID, state) {
     state.nodeCollection = state.nodeCollection.toggleCompletedByID(nodeID);
+    updateNode(state.nodeCollection[nodeID], () => {});
     nodeElement.classList.toggle('completed'); 
 }
 
 function addSiblingNode(nodeID, state) {
     const parentID = state.nodeCollection[nodeID].parentID;
-    const newNodeIndex = state.nodeCollection[parentID].childIDs.indexOf(nodeID) + 1;
-    const newNodeID = Math.floor(Math.random() * 1000000).toString();
-    const newNode = Node({id: newNodeID, parentID: parentID});
-    state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, newNodeIndex); 
-    renderTree(state.nodeCollection.buildTree(state.currentRootID));
-    moveCursorToBeginningOfNode(newNode.id, state);
+    createNode(state.listID, parentID, (e) => {
+        const newNodeIndex = state.nodeCollection[parentID].childIDs.indexOf(nodeID) + 1;
+        const newNode = Node({id: e.response['_id'], parentID: parentID});
+        state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, newNodeIndex); 
+        updateNode(state.nodeCollection[parentID], () => {});
+        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+        moveCursorToBeginningOfNode(newNode.id, state);
+    });
 }
 
 function addChildNode(nodeID, state) {
-    const newNodeID = Math.floor(Math.random() * 1000000).toString();
-    const newNode = Node({id: newNodeID, parentID: nodeID});
-    state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, 0);
-    state.nodeCollection = state.nodeCollection.expandByID(nodeID);
-    renderTree(state.nodeCollection.buildTree(state.currentRootID));
-    moveCursorToBeginningOfNode(newNode.id, state);
+    createNode(state.listID, nodeID, (e) => {
+        const newNode = Node({id: e.response['_id'], parentID: nodeID});
+        state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, 0);
+        state.nodeCollection = state.nodeCollection.expandByID(nodeID);
+        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+        moveCursorToBeginningOfNode(newNode.id, state);
+    });  
 }
 
 function indentNode(nodeID, state) {
     state.nodeCollection = state.nodeCollection.indent(nodeID);
+    const newParentID = state.nodeCollection[nodeID].parentID;
+    updateNode(state.nodeCollection[nodeID], () => {});
+    //update parent to remeber that the node is now expanded
+    updateNode(state.nodeCollection[newParentID], () => {}); 
     renderTree(state.nodeCollection.buildTree(state.currentRootID));
 }
 
 function unindentNode(nodeID, state) {
     state.nodeCollection = state.nodeCollection.unindent(nodeID);
+    updateNode(state.nodeCollection[nodeID], () => {});
     renderTree(state.nodeCollection.buildTree(state.currentRootID));
 }
 
@@ -171,6 +194,7 @@ function moveCursorDown(nodeID, state) {
 
 function deleteNodeIfEmpty(nodeID, state) {
     if ((nodeID !== state.currentRootID) && state.nodeCollection[nodeID].text === '') {
+        deleteNode(nodeID, () => {});
         const nextID = state.nodeCollection.getNextUpID(nodeID);
         state.nodeCollection = state.nodeCollection.deleteByID(nodeID);
         renderTree(state.nodeCollection.buildTree(state.currentRootID));
