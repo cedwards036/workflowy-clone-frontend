@@ -1,16 +1,15 @@
-import NodeCollection from './node-collection';
 import Node from './node';
+import List from './list';
 
 export function parseGetListResponse(response) {
-    const state = {
+    const list = List({
+        id: response['_id'],
         showCompleted: response['show_completed'],
         currentRootID: response['root_node_id'],
-        tags: response['tag_names'],
-        nodeCollection: NodeCollection(),
-        listID: response['_id']
-    };
+        tags: response['tag_names']
+    });
     response['nodes'].forEach(nodeData => {
-        state.nodeCollection = state.nodeCollection.add(Node({
+        list.nodes = list.nodes.add(Node({
             id: nodeData['_id'],
             text: nodeData['text'],
             isCompleted: nodeData['completed'],
@@ -20,7 +19,7 @@ export function parseGetListResponse(response) {
             parentID: nodeData['parent_node_id']
         }))
     });
-    return state;
+    return list;
 }
 
 export function getList(listID, callback) {
@@ -88,10 +87,10 @@ export function deleteNode(nodeID, callback) {
     request.send();
 }
 
-export function updateList(state, callback) {
+export function updateList(list, callback) {
     const body = {
         list: {
-            show_completed: state.showCompleted
+            show_completed: list.showCompleted
         }
     }
     const request = new XMLHttpRequest();
@@ -100,7 +99,7 @@ export function updateList(state, callback) {
             callback(this);
         }
     };
-    request.open('PUT', `https://workflowy-clone-api.herokuapp.com/lists/${state.listID}`, true);
+    request.open('PUT', `https://workflowy-clone-api.herokuapp.com/lists/${list.id}`, true);
     request.setRequestHeader('Content-Type', 'application/json');
     request.responseType = 'json';
     request.send(JSON.stringify(body));

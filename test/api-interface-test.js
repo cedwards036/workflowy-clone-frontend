@@ -1,6 +1,7 @@
 import assert from 'assert';
 import NodeCollection from '../src/node-collection';
 import Node from '../src/node';
+import List from '../src/list';
 import {parseGetListResponse} from '../src/api-interface';
 
 describe('parseGetListResponse', () => {
@@ -62,13 +63,13 @@ describe('parseGetListResponse', () => {
                                         childIDs: [],
                                         parentID: "5eff5d2dfde52d0004ebd139"
                                     }));
-        const expected = {
-            nodeCollection: expectedCollection,
+        const expected = List({
+            nodes: expectedCollection,
             showCompleted: false,
             currentRootID: "5eff5d2dfde52d0004ebd139",
             tags: ['tag1', 'tag2', 'tag3'],
-            listID: '5eff5d2dfde52d0004ebd138'
-        }
+            id: '5eff5d2dfde52d0004ebd138'
+        })
         assert.deepStrictEqual(parseGetListResponse(response), expected);
     });
 });
