@@ -34,7 +34,7 @@ export function getList(listID, callback) {
 export function createNode(listID, parentID, callback) {
     const body = {
         node: {
-            text: '', 
+            text: 'untitled', 
             completed: false,
             expanded: false,
             tag_names: [],

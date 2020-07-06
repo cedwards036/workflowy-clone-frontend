@@ -145,21 +145,21 @@ function addSiblingNode(nodeID, state) {
     const parentID = state.nodeCollection[nodeID].parentID;
     createNode(state.listID, parentID, (e) => {
         const newNodeIndex = state.nodeCollection[parentID].childIDs.indexOf(nodeID) + 1;
-        const newNode = Node({id: e.response['_id'], parentID: parentID});
+        const newNode = Node({id: e.response['_id'], text: e.response['text'], parentID: parentID});
         state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, newNodeIndex); 
         updateNode(state.nodeCollection[parentID], () => {});
         renderTree(state.nodeCollection.buildTree(state.currentRootID));
-        moveCursorToBeginningOfNode(newNode.id, state);
+        highlightEntireNodeText(newNode.id, state);
     });
 }
 
 function addChildNode(nodeID, state) {
     createNode(state.listID, nodeID, (e) => {
-        const newNode = Node({id: e.response['_id'], parentID: nodeID});
+        const newNode = Node({id: e.response['_id'], text: e.response['text'], parentID: nodeID});
         state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, 0);
         state.nodeCollection = state.nodeCollection.expandByID(nodeID);
         renderTree(state.nodeCollection.buildTree(state.currentRootID));
-        moveCursorToBeginningOfNode(newNode.id, state);
+        highlightEntireNodeText(newNode.id, state);
     });  
 }
 
@@ -264,6 +264,21 @@ function moveCursorToEndOfNode(nodeID, state) {
             const range = document.createRange();
             range.selectNodeContents(nodeText);
             range.collapse(false);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } 
+    } 
+}
+
+function highlightEntireNodeText(nodeID, state) {
+    if (state.nodeCollection.hasOwnProperty(nodeID)) {
+        const node = getNodeElementByID(nodeID);
+        if (node !== null) {
+            const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
+            nodeText.focus();
+            const range = document.createRange();
+            range.selectNodeContents(nodeText);
             const selection = window.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
