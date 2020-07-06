@@ -172,9 +172,11 @@ function indentNode(nodeID, state) {
 }
 
 function unindentNode(nodeID, state) {
-    state.nodeCollection = state.nodeCollection.unindent(nodeID);
-    updateNode(state.nodeCollection[nodeID], () => {});
-    renderTree(state.nodeCollection.buildTree(state.currentRootID));
+    if (state.nodeCollection[nodeID].parentID !== state.currentRootID) {
+        state.nodeCollection = state.nodeCollection.unindent(nodeID);
+        updateNode(state.nodeCollection[nodeID], () => {});
+        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+    }
 }
 
 function updateNodeText(nodeElement, nodeID, state) {
