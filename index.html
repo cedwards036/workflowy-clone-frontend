@@ -6,8 +6,17 @@
         <script type="text/javascript" src="dist/index.js" async></script>
     </head>
     <body>
-        <div id="header"><h1><a href="/">Workflowish</a></h1></div>
-        <div id="nodePath"></div>
+        <div id="pageHeader"><h1><a href="/">Workflowish</a></h1></div>
+        <div id="listHeader">
+            <div id="nodePath"></div>
+            <div>
+                <span>Show Completed</span>
+                <label class="switch">
+                    <input id="showCompletedSwitch" type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
         <div id="list">
             <div class="loader"></div>
         </div>

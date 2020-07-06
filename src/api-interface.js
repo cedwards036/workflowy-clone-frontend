@@ -87,3 +87,21 @@ export function deleteNode(nodeID, callback) {
     request.responseType = 'json';
     request.send();
 }
+
+export function updateList(state, callback) {
+    const body = {
+        list: {
+            show_completed: state.showCompleted
+        }
+    }
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 204) {
+            callback(this);
+        }
+    };
+    request.open('PUT', `https://workflowy-clone-api.herokuapp.com/lists/${state.listID}`, true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.responseType = 'json';
+    request.send(JSON.stringify(body));
+}

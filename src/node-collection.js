@@ -124,20 +124,23 @@ NodeCollection.prototype = {
         }
     },
 
-    buildTree(rootNodeID) {
+    buildTree(rootNodeID, showCompleted = true) {
         let rootNode;
         if (!this.hasOwnProperty(rootNodeID)) {
             rootNode = Node();
         } else {
             rootNode = this[rootNodeID];
         }
-        return this.convertToTree(rootNode, 0);
+        return this.convertToTree(rootNode, 0, showCompleted);
     },
 
-    convertToTree(node, level) {
+    convertToTree(node, level, showCompleted) {
         return produce(node, draft => {
+            draft.childIDs = draft.childIDs.filter(childID => {
+                return showCompleted || !this[childID].isCompleted
+            });
             draft.children = draft.childIDs.map(childID => {
-                return this.convertToTree(this[childID], level + 1);
+                return this.convertToTree(this[childID], level + 1, showCompleted);
             });
             draft.level = level;
         });

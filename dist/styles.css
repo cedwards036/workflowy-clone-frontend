@@ -2,6 +2,7 @@
     --main-text-color: rgb(255, 255, 255, 0.87);
     --secondary-text-color:  rgb(255, 255, 255, 0.60);
     --disabled-text-color:  rgb(255, 255, 255, 0.38);
+    --highlight-color: #6200EE;
     --background-color:  #121212;
     --list-card-color:  #000000;
 }
@@ -11,7 +12,7 @@ body {
     font-family: sans-serif;
 }
 
-#header {
+#pageHeader {
     width: 100%;
     text-align: center;
 }
@@ -23,6 +24,26 @@ h1 {
 h1 a, a:visited {
     color: inherit;
     text-decoration: none;
+}
+
+#listHeader {
+    margin: auto;
+    width: 700px;
+    padding: 10px 0px 10px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--secondary-text-color);
+    font-size: 0.75em;
+}
+
+.path-link, .path-link:visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+.path-link:hover {
+    color: var(--main-text-color);
 }
 
 #list {
@@ -100,23 +121,6 @@ h1 a, a:visited {
     color: var(--disabled-text-color);
 }
 
-.path-link, .path-link:visited {
-    text-decoration: none;
-    color: inherit;
-}
-
-.path-link:hover {
-    color: var(--main-text-color);
-}
-
-#nodePath {
-    color: var(--secondary-text-color);
-    font-size: 0.75em;
-    margin: auto;
-    width: 700px;
-    padding: 10px 0px 10px 0px;
-}
-
 .hidden {
     display: none;
 }
@@ -130,19 +134,73 @@ h1 a, a:visited {
           -ms-user-select: none; /* Internet Explorer/Edge */
               user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
-  }
+}
 
-  .loader {
-    border: 16px solid var(--disabled-text-color); /* Light grey */
-    border-top: 16px solid var(--main-text-color); /* Blue */
+.loader {
+border: 16px solid var(--disabled-text-color); /* Light grey */
+border-top: 16px solid var(--main-text-color); /* Blue */
+border-radius: 50%;
+width: 120px;
+height: 120px;
+margin: auto;
+animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+/*Slider CSS from https://www.w3schools.com/howto/howto_css_switch.asp*/
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 2.4em;
+    height: 1.3em;
+}
+  
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--secondary-text-color);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 0.9em;
+    width: 0.9em;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--main-text-color);
+    -webkit-transition: .4s;
+    transition: .4s;
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    margin: auto;
-    animation: spin 2s linear infinite;
-  }
+}
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+input:checked + .slider {
+    background-color: var(--highlight-color);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--highlight-color);
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(1em);
+    -ms-transform: translateX(1em);
+    transform: translateX(1em);
+}

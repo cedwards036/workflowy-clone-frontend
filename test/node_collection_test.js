@@ -375,6 +375,18 @@ describe('NodeCollection', () => {
                 })
                 assert.deepStrictEqual(nodeCollection.buildTree(rootNode.id), expected);
             });
+
+            it('ignores completed nodes if showCompleted is false', () => {
+                const rootNode = Node({id: '09wfk4t'});
+                const child1 = Node({id: '115363', parentID: rootNode.id, isCompleted: true});
+                const grandchild = Node({id: 'f2244gh', parentID: child1.id});
+                const nodeCollection = NodeCollection().add(rootNode).add(child1).add(grandchild);
+                const expected = produce(rootNode, draft => {
+                    draft.children = [];
+                    draft.level = 0;
+                })
+                assert.deepStrictEqual(nodeCollection.buildTree(rootNode.id, false), expected);
+            });
         });
 
         describe('when the collection does not contain the root node ID', () => {

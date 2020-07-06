@@ -1,7 +1,7 @@
 import HTML from './html';
 import Node from './node';
 import {renderTree, renderNodePath} from './render';
-import {createNode, updateNode, deleteNode} from './api-interface';
+import {createNode, updateNode, deleteNode, updateList} from './api-interface';
 
 const ENTER = 13;
 const BACKSPACE = 8;
@@ -118,6 +118,14 @@ export function addEventListeners(state) {
         }
     });
 
+    //toggle whether or not to show completed nodes
+    document.getElementById('showCompletedSwitch').addEventListener('input', (e) => {
+        state.showCompleted = e.target.checked;
+        updateList(state, () => {});
+        renderTree(state);
+    });
+
+    //deal with browser history changes
     window.addEventListener('hashchange', (e) => {
         loadNodeURL(location.hash, state);
     });
@@ -138,6 +146,11 @@ function toggleNodeCompletion(nodeElement, nodeID, state) {
     state.nodeCollection = state.nodeCollection.toggleCompletedByID(nodeID);
     updateNode(state.nodeCollection[nodeID], () => {});
     nodeElement.classList.toggle('completed'); 
+    if (!state.showCompleted) {
+        setTimeout(() => {
+            nodeElement.remove();
+        }, 400);
+    }
 }
 
 function addSiblingNode(nodeID, state) {
@@ -147,7 +160,7 @@ function addSiblingNode(nodeID, state) {
         const newNode = Node({id: e.response['_id'], text: e.response['text'], parentID: parentID});
         state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, newNodeIndex); 
         updateNode(state.nodeCollection[parentID], () => {});
-        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+        renderTree(state);
         highlightEntireNodeText(newNode.id, state);
     });
 }
@@ -157,7 +170,7 @@ function addChildNode(nodeID, state) {
         const newNode = Node({id: e.response['_id'], text: e.response['text'], parentID: nodeID});
         state.nodeCollection = state.nodeCollection.addAsNthChild(newNode, 0);
         state.nodeCollection = state.nodeCollection.expandByID(nodeID);
-        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+        renderTree(state);
         highlightEntireNodeText(newNode.id, state);
     });  
 }
@@ -168,14 +181,14 @@ function indentNode(nodeID, state) {
     updateNode(state.nodeCollection[nodeID], () => {});
     //update parent to remeber that the node is now expanded
     updateNode(state.nodeCollection[newParentID], () => {}); 
-    renderTree(state.nodeCollection.buildTree(state.currentRootID));
+    renderTree(state);
 }
 
 function unindentNode(nodeID, state) {
     if (state.nodeCollection[nodeID].parentID !== state.currentRootID) {
         state.nodeCollection = state.nodeCollection.unindent(nodeID);
         updateNode(state.nodeCollection[nodeID], () => {});
-        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+        renderTree(state);
     }
 }
 
@@ -199,15 +212,15 @@ function deleteNodeIfEmpty(nodeID, state) {
         deleteNode(nodeID, () => {});
         const nextID = state.nodeCollection.getNextUpID(nodeID);
         state.nodeCollection = state.nodeCollection.deleteByID(nodeID);
-        renderTree(state.nodeCollection.buildTree(state.currentRootID));
+        renderTree(state);
         moveCursorToEndOfNode(nextID, state);
     }
 }
 
 function zoomIn(nodeID, state) {
     history.pushState(null, null, `/#/${nodeID}`);
-    renderTree(state.nodeCollection.buildTree(nodeID));
     state.currentRootID = nodeID;
+    renderTree(state);
     renderNodePath(state.currentRootID, state.nodeCollection);
     const newRootNode = state.nodeCollection[nodeID];
     if (newRootNode.childIDs.length > 0) {
@@ -222,8 +235,8 @@ function zoomOut(state) {
     const rootParentID = oldRoot.parentID;
     if (state.nodeCollection.hasOwnProperty(rootParentID)) {
         history.pushState(null, null, `/#/${rootParentID}`);
-        renderTree(state.nodeCollection.buildTree(rootParentID));
         state.currentRootID = rootParentID;
+        renderTree(state);
         renderNodePath(state.currentRootID, state.nodeCollection);
         moveCursorToBeginningOfNode(oldRoot.id, state);
     }
@@ -296,8 +309,8 @@ function nodeIsAbsent(nodeID) {
 export function loadNodeURL(url, state) {
     const nodeID = url.split('/').pop();
     state.nodeCollection = state.nodeCollection.expandByID(nodeID);
-    renderTree(state.nodeCollection.buildTree(nodeID));
     state.currentRootID = nodeID;
+    renderTree(state);
     renderNodePath(state.currentRootID, state.nodeCollection);
     moveCursorToBeginningOfNode(nodeID, state);
 }
