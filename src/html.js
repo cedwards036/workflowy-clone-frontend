@@ -1,3 +1,5 @@
+import {parseForTags} from './tag-parser';
+
 const RIGHT_ARROW = '&#9654;';
 const DOWN_ARROW = '&#9660;';
 const DOT = '&#9679;';
@@ -24,7 +26,7 @@ export default {
     forRootNodeRow(node) {
         return `
             <div class="node-row">
-                <div class="node-text root-text" contenteditable="true" tabindex="-1">${node.text}</div>
+                <div class="node-text root-text" contenteditable="true" tabindex="-1">${this.forNodeText(node)}</div>
             </div>
         `;
     },
@@ -34,7 +36,7 @@ export default {
             <div class="node-row">
                 ${this.arrowDiv(node)}
                 <a href="/#/${node.id}" class="node-bullet noselect">${DOT}</a>
-                <div class="node-text" contenteditable="true" tabindex="-1">${node.text}</div>
+                <div class="node-text" contenteditable="true" tabindex="-1">${this.forNodeText(node)}</div>
             </div>
         `;
     },
@@ -71,5 +73,19 @@ export default {
         return nodePath.reverse().map(nodeID => {
             return `<a href="/#/${nodeID}" class="path-link">${nodeCollection[nodeID].text}</a>`
         }).join('  >  ');
+    },
+
+    forNodeText(node) {
+        return this.forParsedNodeText(parseForTags(node.text));
+    },
+
+    forParsedNodeText(parsedText) {
+        return parsedText.reduce((html, substring) => {
+            return html + (substring.isTag ? this.forTag(substring.text) : substring.text);
+        }, '');
+    },
+
+    forTag(tag) {
+        return `<span class="tag">${tag}</span>`;
     }
 }

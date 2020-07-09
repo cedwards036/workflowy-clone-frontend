@@ -1,5 +1,6 @@
 import HTML from './html';
 import Node from './node';
+import {parseForTags} from './tag-parser';
 import {createNode, updateNode, deleteNode, updateList} from './api-interface';
 
 const ENTER = 13;
@@ -107,6 +108,7 @@ export function addEventListeners(list) {
         //keep data model up to date with node text
         if (e.target.classList.contains('node-text')) {
             updateNodeText(nodeElement, nodeID, list);
+            maintainCursorThroughAction(updateElementHTML, nodeID, list);
         }
     });
 
@@ -208,6 +210,13 @@ function updateNodeText(nodeElement, nodeID, list) {
     list.nodes = list.nodes.updateTextByID(nodeID, newText);
 }
 
+function updateElementHTML(nodeID, list) {
+    const textElement = getNodeElementByID(nodeID).querySelector('.node-text');
+    const newText = textElement.innerText;
+    const parsedText = parseForTags(newText);
+    textElement.innerHTML = HTML.forParsedNodeText(parsedText);
+}
+
 function moveCursorUp(nodeID, list) {
     const nextID = list.nodes.getNextUpID(nodeID);
     moveCursorToBeginningOfNode(nextID, list);
@@ -255,18 +264,43 @@ function zoomOut(list) {
 }
 
 function maintainCursorThroughAction(action, nodeID, list) {
-    const oldStartOffset = window.getSelection().getRangeAt(0).cloneRange().startOffset;
+    const cursorPosition = saveCursorPosition(nodeID);
     action(nodeID, list);
-    const alteredNode = getNodeElementByID(nodeID);
-    const nodeText = alteredNode.querySelector('.node-text');
-    nodeText.focus();
-    if (oldStartOffset !== 0) {
-        const newRange = new Range();
-        newRange.setStart(nodeText.firstChild, oldStartOffset);
-        newRange.collapse(true);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(newRange);
-    }
+    restoreNodeCursorPosition(nodeID, cursorPosition);
+}
+
+function saveCursorPosition(nodeID) {
+    const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
+    const range = window.getSelection().getRangeAt(0).cloneRange();
+    range.setStart(nodeText, 0);
+    return range.toString().length;
+}
+
+function restoreNodeCursorPosition(nodeID, cursorPosition) {
+    const nodeText = getNodeElementByID(nodeID).querySelector('.node-text');
+    const newCursorPosition = getChildNodeAtPosition(nodeText, cursorPosition);
+    window.getSelection().removeAllRanges();
+    const newRange = new Range();
+    newRange.setStart(newCursorPosition.node, newCursorPosition.position);
+    window.getSelection().addRange(newRange);
+}
+
+//thanks to https://stackoverflow.com/a/38479462/8048369
+function getChildNodeAtPosition(root, index) {
+    var lastNode = null;
+    var treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT,function next(elem) {
+        if(index > elem.textContent.length){
+            index -= elem.textContent.length;
+            lastNode = elem;
+            return NodeFilter.FILTER_REJECT
+        }
+        return NodeFilter.FILTER_ACCEPT;
+    });
+    var c = treeWalker.nextNode();
+    return {
+        node: c? c: root,
+        position: index
+    };
 }
 
 function moveCursorToBeginningOfNode(nodeID, list) {

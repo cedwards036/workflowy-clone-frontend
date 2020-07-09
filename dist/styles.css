@@ -3,6 +3,8 @@
     --secondary-text-color:  rgb(255, 255, 255, 0.60);
     --disabled-text-color:  rgb(255, 255, 255, 0.38);
     --highlight-color: #6200EE;
+    --tag-color: #BB86FC;
+    --disabled-tag-color: rgb(187, 134, 252, 0.38);
     --background-color:  #121212;
     --list-card-color:  #000000;
 }
@@ -119,6 +121,21 @@ h1 a, a:visited {
 .completed .node-text {
     text-decoration: line-through;
     color: var(--disabled-text-color);
+}
+
+.completed .tag {
+    color: var(--disabled-tag-color);
+}
+
+.tag {
+    color: var(--secondary-text-color);
+    text-decoration: underline;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.tag:hover {
+    color: var(--tag-color);
 }
 
 footer {
