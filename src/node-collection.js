@@ -100,6 +100,16 @@ NodeCollection.prototype = {
         }
     },
 
+    setTagsByID(nodeID, newTags) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return this;
+        } else {
+            return produce(this, draft => {
+                draft[nodeID] = draft[nodeID].setTags(newTags);
+            }); 
+        }
+    },
+
     deleteByID(nodeID) {
         if (!this.hasOwnProperty(nodeID)) {
             return this;

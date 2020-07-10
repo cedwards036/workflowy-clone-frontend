@@ -207,6 +207,20 @@ describe('NodeCollection', () => {
         }); 
     });
 
+    describe('setTagsByID', () => {
+        it('updates the specified node\'s tags', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node).setTagsByID(node.id, ['tag1', 'tag2']);
+            assert.deepStrictEqual(nodeCollection[node.id].tags, ['tag1', 'tag2']);
+        }); 
+
+        it('does nothing when the node doesn\'t exist', () => {
+            const node = Node({id: '892j9r'});
+            const nodeCollection = NodeCollection().add(node);
+            assert.deepStrictEqual(nodeCollection.setTagsByID('', []), nodeCollection);
+        }); 
+    });
+
     describe('getNextUpID', () => {
         let root, node, nodeChild, nodeGrandchild, nodeSibling1, nodeSibling2, 
             nodeSibling2Child, nodeSibling3, nodeCollection;

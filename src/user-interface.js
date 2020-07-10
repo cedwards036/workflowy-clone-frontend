@@ -214,6 +214,8 @@ function updateElementHTML(nodeID, list) {
     const textElement = getNodeElementByID(nodeID).querySelector('.node-text');
     const newText = textElement.innerText;
     const parsedText = parseForTags(newText);
+    const tags = parsedText.filter(textObj => textObj.isTag).map(textObj => textObj.text);
+    list.nodes = list.nodes.setTagsByID(nodeID, tags);
     textElement.innerHTML = HTML.forParsedNodeText(parsedText);
 }
 
