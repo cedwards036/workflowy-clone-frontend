@@ -44,5 +44,11 @@ Node.prototype = {
         return produce(this, draft => {
             draft.tags.push(tag);
         });
+    },
+
+    setTags(tags) {
+        return produce(this, draft => {
+            draft.tags = tags;
+        });
     }
 }

@@ -100,6 +100,16 @@ NodeCollection.prototype = {
         }
     },
 
+    setTagsByID(nodeID, newTags) {
+        if (!this.hasOwnProperty(nodeID)) {
+            return this;
+        } else {
+            return produce(this, draft => {
+                draft[nodeID] = draft[nodeID].setTags(newTags);
+            }); 
+        }
+    },
+
     deleteByID(nodeID) {
         if (!this.hasOwnProperty(nodeID)) {
             return this;
@@ -124,6 +134,32 @@ NodeCollection.prototype = {
         }
     },
 
+    buildTagFilteredTree(rootNodeID, tag, showCompleted = true) {
+        const rootNode = this.buildTree(rootNodeID, showCompleted);
+        return this.filterOutDescendantsWithoutTag(rootNode, tag);
+    },
+
+    filterOutDescendantsWithoutTag(treeNode, tag) {
+        if (treeNode.tags.includes(tag)) {
+            return produce(treeNode, draft => {
+                draft.children.forEach(child => {
+                    child.include = true;
+                });
+                draft.include = true;
+            });
+        } else {
+            return produce(treeNode, draft => {
+                draft.children = draft.children.map(child => {
+                    return this.filterOutDescendantsWithoutTag(child, tag);
+                });
+                draft.children = draft.children.filter(child => {
+                    return child.include;
+                });
+                draft.include = draft.children.length > 0;
+            });
+        }
+    },
+
     buildTree(rootNodeID, showCompleted = true) {
         let rootNode;
         if (!this.hasOwnProperty(rootNodeID)) {
@@ -143,6 +179,7 @@ NodeCollection.prototype = {
                 return this.convertToTree(this[childID], level + 1, showCompleted);
             });
             draft.level = level;
+            delete draft.childIDs;
         });
     },
 
