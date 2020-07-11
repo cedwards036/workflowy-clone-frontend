@@ -48,7 +48,7 @@ h1 a, a:visited {
     color: var(--main-text-color);
 }
 
-#list {
+#listContainer {
     margin: auto;
     width: 700px;
     min-height: 680px;
@@ -111,7 +111,7 @@ h1 a, a:visited {
 
 .node-text {
     padding-left: 5px;
-    min-width: 150px;
+    min-width: 500px;
 }
 
 .root-text {
@@ -123,7 +123,7 @@ h1 a, a:visited {
     color: var(--disabled-text-color);
 }
 
-.completed .tag {
+.completed .tag:hover {
     color: var(--disabled-tag-color);
 }
 
@@ -138,10 +138,47 @@ h1 a, a:visited {
     color: var(--tag-color);
 }
 
+#currentFilters {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.tag-filter-card {
+    color: var(--secondary-text-color);
+    font-size: 0.75em;
+    padding: 6px;
+    border: 1px solid;
+    border-radius: 10px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tag-filter-card:hover {
+    color: var(--main-text-color);
+}
+
+.tag-filter-card .remove-tag {
+    font-size: 1.5em;
+    border-right: 1px solid;
+    padding-right: 4px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
 footer {
     color: var(--secondary-text-color);
     text-align: center;
     margin: 20px;
+}
+
+footer a {
+    color: var(--main-text-color);
+}
+
+footer a:visited {
+    color: var(--main-text-color);
 }
 
 .hidden {

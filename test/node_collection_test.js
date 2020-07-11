@@ -357,6 +357,7 @@ describe('NodeCollection', () => {
                 const expected = produce(rootNode, draft => {
                     draft.children = [];
                     draft.level = 0;
+                    delete draft.childIDs;
                 })
                 assert.deepStrictEqual(nodeCollection.buildTree(rootNode.id), expected);
             });
@@ -372,21 +373,23 @@ describe('NodeCollection', () => {
                         produce(child1, draft => {
                             draft.children = [];
                             draft.level = 1;
+                            delete draft.childIDs;
                         }),
                         produce(child2, draft => {
                             draft.children = [
                                 produce(grandchild, draft => {
                                     draft.children = [];
                                     draft.level = 2;
+                                    delete draft.childIDs;
                                 })
                             ];
-                            draft.childIDs = [grandchild.id];
                             draft.level = 1;
+                            delete draft.childIDs;
                         })
                     ];
-                    draft.childIDs = [child1.id, child2.id];
                     draft.level = 0;
-                })
+                    delete draft.childIDs;
+                });
                 assert.deepStrictEqual(nodeCollection.buildTree(rootNode.id), expected);
             });
 
@@ -398,6 +401,7 @@ describe('NodeCollection', () => {
                 const expected = produce(rootNode, draft => {
                     draft.children = [];
                     draft.level = 0;
+                    delete draft.childIDs;
                 })
                 assert.deepStrictEqual(nodeCollection.buildTree(rootNode.id, false), expected);
             });
@@ -409,8 +413,90 @@ describe('NodeCollection', () => {
                 const expected = Node();
                 expected.children = [];
                 expected.level = 0;
+                delete expected.childIDs;
                 assert.deepStrictEqual(nodeCollection.buildTree('some_id'), expected);
             });
+        });
+    });
+
+    describe('buildTagFilteredTree', () => {
+        it('returns the root node if there are no children', () => {
+            const rootNode = Node({id: 'apce93t'});
+            const nodeCollection = NodeCollection().add(rootNode);
+            const expected = produce(rootNode, draft => {
+                draft.children = [];
+                draft.level = 0;
+                draft.include = false;
+                delete draft.childIDs;
+            })
+            const tree = nodeCollection.buildTagFilteredTree(rootNode.id, 'tag1');
+            assert.deepStrictEqual(tree, expected);
+        });
+
+        it('returns the root node if no nodes in the tree have the tag', () => {
+            const rootNode = Node({id: 'apce93t'});
+            const child = Node({id: 'fj938j', parentID: rootNode.id})
+            const nodeCollection = NodeCollection().add(rootNode).add(child);
+            const expected = produce(rootNode, draft => {
+                draft.children = [];
+                draft.level = 0;
+                draft.include = false;
+                delete draft.childIDs;
+            });
+            const tree = nodeCollection.buildTagFilteredTree(rootNode.id, 'tag1');
+            assert.deepStrictEqual(tree, expected);
+        });
+
+        it('filters the tree to just those nodes containing the given tag (and their parents/children)', () => {
+            const rootNode = Node({id: '09wfk4t'});
+            const child1 = Node({id: '115363', parentID: rootNode.id});
+            const grandchild1 = Node({id: 'v848jf84', parentID: child1.id, tags: ['tag1']});
+            const child2 = Node({id: '184364', parentID: rootNode.id, tags: ['tag1']});
+            const grandchild2 = Node({id: 'f2244gh', parentID: child2.id});
+            const child3 = Node({id: 'f43j438', parentID: rootNode.id});
+            const nodeCollection = NodeCollection()
+                                    .add(rootNode)
+                                    .add(child1)
+                                    .add(grandchild1)
+                                    .add(child2)
+                                    .add(grandchild2)
+                                    .add(child3);
+            const expected = produce(rootNode, draft => {
+                draft.children = [
+                    produce(child1, draft => {
+                        draft.children = [
+                            produce(grandchild1, draft => {
+                                draft.children = [];
+                                draft.level = 2;
+                                draft.include = true;
+                                delete draft.childIDs;
+                            })
+                        ];
+                        draft.level = 1;
+                        draft.include = true;
+                        delete draft.childIDs;
+                    }),
+                    produce(child2, draft => {
+                        draft.children = [
+                            produce(grandchild2, draft => {
+                                draft.children = [];
+                                draft.level = 2;
+                                draft.include = true;
+                                delete draft.childIDs;
+                            })
+                        ];
+                        draft.level = 1;
+                        draft.include = true;
+                        delete draft.childIDs;
+                    }),
+                ];
+                draft.level = 0;
+                draft.include = true;
+                delete draft.childIDs;
+            });
+            
+            const tree = nodeCollection.buildTagFilteredTree(rootNode.id, 'tag1');
+            assert.deepStrictEqual(tree, expected);
         });
     });
 });

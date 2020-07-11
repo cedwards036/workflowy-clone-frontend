@@ -50,7 +50,7 @@ export default {
     },
 
     arrowDiv(node) {
-        if (node.childIDs.length > 0) {
+        if (node.children.length > 0) {
             return `<div class="node-arrow noselect">${this.nodeArrow(node)}</div>`;
         } else {
             return `<div class="no-node-arrow noselect"></div>`;
@@ -87,5 +87,9 @@ export default {
 
     forTag(tag) {
         return `<span class="tag">${tag}</span>`;
+    },
+
+    forTagFilterCard(tag) {
+        return `<div class="tag-filter-card"><span class="remove-tag">&times;</span> ${tag}</div>`;
     }
 }

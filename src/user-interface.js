@@ -13,10 +13,11 @@ const LEFT_ARROW = 37;
 
 const listElement = document.getElementById('list');
 const nodePathElement = document.getElementById('nodePath');
+const currentFiltersElement = document.getElementById('currentFilters');
 
 export function addEventListeners(list) {
 
-    document.getElementById('nodePath').addEventListener('click', (e) => {
+    nodePathElement.addEventListener('click', (e) => {
         if (e.target.classList.contains('path-link')) {
             e.preventDefault();
             loadNodeURL(e.target.href, list);
@@ -24,21 +25,25 @@ export function addEventListeners(list) {
         }
     });
 
-    document.getElementById('list').addEventListener('click', (e) => {
+    listElement.addEventListener('click', (e) => {
+        //expand/collapse a node 
         if (e.target.classList.contains('node-arrow')) {
             const nodeElement = e.target.closest('.node');
             const nodeID = nodeElement.dataset.id;
             handleArrowClick(nodeElement, nodeID, list);
-        }
-
-        if (e.target.classList.contains('node-bullet')) {
+        //zoom in on the clicked node
+        } else if (e.target.classList.contains('node-bullet')) {
             e.preventDefault();
             loadNodeURL(e.target.href, list);
             history.pushState(null, null, e.target.href);
+        //filter the list to the clicked tag
+        } else if (e.target.classList.contains('tag')) {
+            e.preventDefault();
+            toggleTagFiltering(e.target.innerText, list);
         }
     });
 
-    document.getElementById('list').addEventListener('keydown', (e) => {
+    listElement.addEventListener('keydown', (e) => {
         const nodeElement = e.target.closest('.node');
         const nodeID = nodeElement.dataset.id;
         if (e.target.classList.contains('node-text')) {
@@ -94,6 +99,7 @@ export function addEventListeners(list) {
     });
 
     document.addEventListener('keydown', (e) => {
+        //add new node to the current root when hitting enter from outside the list
         if (e.keyCode === ENTER) {
             if (!e.target.classList.contains('node-text')) {
                 addChildNode(list.currentRootID, list);
@@ -102,7 +108,7 @@ export function addEventListeners(list) {
         }
     });
 
-    document.getElementById('list').addEventListener('input', (e) => {
+    listElement.addEventListener('input', (e) => {
         const nodeElement = e.target.closest('.node');
         const nodeID = nodeElement.dataset.id;
         //keep data model up to date with node text
@@ -112,7 +118,7 @@ export function addEventListeners(list) {
         }
     });
 
-    document.getElementById('list').addEventListener('focusout', (e) => {
+    listElement.addEventListener('focusout', (e) => {
         const nodeElement = e.target.closest('.node');
         const nodeID = nodeElement.dataset.id;
         //send update request to server when user unfocuses node text field
@@ -121,6 +127,14 @@ export function addEventListeners(list) {
             if (list.hasNode(nodeID)) {
                 updateNode(list.getNode(nodeID), () => {});
             }
+        }
+    });
+
+    currentFiltersElement.addEventListener('click', (e) => {
+        //remove current tag filter when clicking tag filter card
+        if (e.target.classList.contains('remove-tag')) {
+            const tag = e.target.innerText.split(' ')[1];
+            toggleTagFiltering(tag, list);
         }
     });
 
@@ -265,6 +279,17 @@ function zoomOut(list) {
     }
 }
 
+function toggleTagFiltering(tag, list) {
+    if (list.tagFilter === null) {
+        list.setTagFilter(tag);
+    } else {
+        list.removeTagFilter();
+    }
+    history.pushState(null, null, list.getURL());
+    list.renderTree(listElement, tag);
+    list.renderTagFilterCard(currentFiltersElement);
+}
+
 function maintainCursorThroughAction(action, nodeID, list) {
     const cursorPosition = saveCursorPosition(nodeID);
     action(nodeID, list);
@@ -355,10 +380,21 @@ function nodeIsAbsent(nodeID) {
 }
 
 export function loadNodeURL(url, list) {
-    const nodeID = url.split('/').pop();
+    const idAndQuery = url.split('/').pop().split('?');
+    let nodeID = idAndQuery[0];
+    if (idAndQuery.length === 2) {
+        const tag = new URLSearchParams(idAndQuery[1]).get('q');
+        list.setTagFilter(tag);
+    } else {
+        list.removeTagFilter();
+    }
+    if (!list.hasNode(nodeID)) {
+        nodeID = list.currentRootID;
+    }
     list.nodes = list.nodes.expandByID(nodeID);
     list.currentRootID = nodeID;
     list.renderTree(listElement);
     list.renderNodePath(nodePathElement);
+    list.renderTagFilterCard(currentFiltersElement);
     moveCursorToBeginningOfNode(nodeID, list);
 }
