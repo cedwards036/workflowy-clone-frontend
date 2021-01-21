@@ -30,6 +30,6 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "immer": "^7.0.5"
+    "immer": "^8.0.1"
   }
 }
