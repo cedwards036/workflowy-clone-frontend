@@ -1,266 +1,272 @@
 :root {
-    --main-text-color: rgb(255, 255, 255, 0.87);
-    --secondary-text-color:  rgb(255, 255, 255, 0.60);
-    --disabled-text-color:  rgb(255, 255, 255, 0.38);
-    --highlight-color: #6200EE;
-    --tag-color: #BB86FC;
-    --disabled-tag-color: rgb(187, 134, 252, 0.38);
-    --background-color:  #121212;
-    --list-card-color:  #000000;
+  --main-text-color: rgb(255, 255, 255, 0.87);
+  --secondary-text-color: rgb(255, 255, 255, 0.6);
+  --disabled-text-color: rgb(255, 255, 255, 0.38);
+  --highlight-color: #6200ee;
+  --tag-color: #bb86fc;
+  --disabled-tag-color: rgb(187, 134, 252, 0.38);
+  --background-color: #000000;
+  --list-card-color: #121212;
 }
 
 body {
-    background-color: var(--background-color);
-    font-family: sans-serif;
+  background-color: var(--background-color);
+  font-family: sans-serif;
 }
 
 #pageHeader {
-    width: 100%;
-    text-align: center;
+  width: 100%;
+  text-align: center;
 }
 
 h1 {
-    color: var(--main-text-color);
+  color: var(--main-text-color);
 }
 
-h1 a, a:visited {
-    color: inherit;
-    text-decoration: none;
+h1 a,
+a:visited {
+  color: inherit;
+  text-decoration: none;
 }
 
 #listHeader {
-    margin: auto;
-    width: 700px;
-    padding: 10px 0px 10px 0px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--secondary-text-color);
-    font-size: 0.75em;
+  margin: auto;
+  width: 700px;
+  padding: 10px 0px 10px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--secondary-text-color);
+  font-size: 0.75em;
 }
 
-.path-link, .path-link:visited {
-    text-decoration: none;
-    color: inherit;
+.path-link,
+.path-link:visited {
+  text-decoration: none;
+  color: inherit;
 }
 
 .path-link:hover {
-    color: var(--main-text-color);
+  color: var(--main-text-color);
 }
 
 #listContainer {
-    margin: auto;
-    width: 700px;
-    min-height: 680px;
-    padding: 30px;
-    background-color: var(--list-card-color);
-    border-radius: 25px;
+  margin: auto;
+  width: 700px;
+  min-height: 680px;
+  padding: 30px;
+  background-color: var(--list-card-color);
+  border-radius: 25px;
 }
 
 [contenteditable] {
-    outline: 0px solid transparent;
+  outline: 0px solid transparent;
 }
 
 .node {
-    margin: 5px 0px 5px 0px;
+  margin: 5px 0px 5px 0px;
 }
 
 .node-children {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 .root-children {
-    margin-left: 0px;
+  margin-left: 0px;
 }
 
 .node-row {
-    display: flex;
-    color: var(--main-text-color);
+  display: flex;
+  color: var(--main-text-color);
 }
 
 .node-arrow {
-    color: var(--secondary-text-color);
-    cursor: pointer;
-    font-size: 0.75em;
-    width: 0.8em;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  font-size: 0.75em;
+  width: 0.8em;
 }
 
 .no-node-arrow {
-    color: var(--secondary-text-color);
-    width: 0.6em;
+  color: var(--secondary-text-color);
+  width: 0.6em;
 }
 
 .node-arrow:hover {
-    color: var(--main-text-color);
+  color: var(--main-text-color);
 }
 
 .node-bullet {
-    padding-left: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    color: var(--secondary-text-color);
+  padding-left: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--secondary-text-color);
 }
 
 .node-bullet:visited {
-    color: inherit;
+  color: inherit;
 }
 
 .node-bullet:hover {
-    color: var(--main-text-color);
+  color: var(--main-text-color);
 }
 
 .node-text {
-    padding-left: 5px;
-    min-width: 500px;
+  padding-left: 5px;
+  min-width: 500px;
 }
 
 .root-text {
-    font-size: 2em;
+  font-size: 2em;
 }
 
 .completed .node-text {
-    text-decoration: line-through;
-    color: var(--disabled-text-color);
+  text-decoration: line-through;
+  color: var(--disabled-text-color);
 }
 
 .completed .tag:hover {
-    color: var(--disabled-tag-color);
+  color: var(--disabled-tag-color);
 }
 
 .tag {
-    color: var(--secondary-text-color);
-    text-decoration: underline;
-    cursor: pointer;
-    border-radius: 3px;
+  color: var(--secondary-text-color);
+  text-decoration: underline;
+  cursor: pointer;
+  border-radius: 3px;
 }
 
 .tag:hover {
-    color: var(--tag-color);
+  color: var(--tag-color);
 }
 
 #currentFilters {
-    display: inline-block;
-    margin-bottom: 10px;
+  display: inline-block;
+  margin-bottom: 10px;
 }
 
 .tag-filter-card {
-    color: var(--secondary-text-color);
-    font-size: 0.75em;
-    padding: 6px;
-    border: 1px solid;
-    border-radius: 10px;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  color: var(--secondary-text-color);
+  font-size: 0.75em;
+  padding: 6px;
+  border: 1px solid;
+  border-radius: 10px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .tag-filter-card:hover {
-    color: var(--main-text-color);
+  color: var(--main-text-color);
 }
 
 .tag-filter-card .remove-tag {
-    font-size: 1.5em;
-    border-right: 1px solid;
-    padding-right: 4px;
-    margin-right: 4px;
-    cursor: pointer;
+  font-size: 1.5em;
+  border-right: 1px solid;
+  padding-right: 4px;
+  margin-right: 4px;
+  cursor: pointer;
 }
 
 footer {
-    color: var(--secondary-text-color);
-    text-align: center;
-    margin: 20px;
+  color: var(--secondary-text-color);
+  text-align: center;
+  margin: 20px;
 }
 
 footer a {
-    color: var(--main-text-color);
+  color: var(--main-text-color);
 }
 
 footer a:visited {
-    color: var(--main-text-color);
+  color: var(--main-text-color);
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 /*thanks to https://stackoverflow.com/a/4407335/8048369*/
 .noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Old versions of Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
 }
 
 .loader {
-border: 16px solid var(--disabled-text-color); /* Light grey */
-border-top: 16px solid var(--main-text-color); /* Blue */
-border-radius: 50%;
-width: 120px;
-height: 120px;
-margin: auto;
-animation: spin 2s linear infinite;
+  border: 16px solid var(--disabled-text-color); /* Light grey */
+  border-top: 16px solid var(--main-text-color); /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin: auto;
+  animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
-0% { transform: rotate(0deg); }
-100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /*Slider CSS from https://www.w3schools.com/howto/howto_css_switch.asp*/
 .switch {
-    position: relative;
-    display: inline-block;
-    width: 2.4em;
-    height: 1.3em;
+  position: relative;
+  display: inline-block;
+  width: 2.4em;
+  height: 1.3em;
 }
-  
+
 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--secondary-text-color);
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 34px;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--secondary-text-color);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 34px;
 }
 
 .slider:before {
-    position: absolute;
-    content: "";
-    height: 0.9em;
-    width: 0.9em;
-    left: 3px;
-    bottom: 3px;
-    background-color: var(--main-text-color);
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 50%;
+  position: absolute;
+  content: "";
+  height: 0.9em;
+  width: 0.9em;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--main-text-color);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
 }
 
 input:checked + .slider {
-    background-color: var(--highlight-color);
+  background-color: var(--highlight-color);
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px var(--highlight-color);
+  box-shadow: 0 0 1px var(--highlight-color);
 }
 
 input:checked + .slider:before {
-    -webkit-transform: translateX(1em);
-    -ms-transform: translateX(1em);
-    transform: translateX(1em);
+  -webkit-transform: translateX(1em);
+  -ms-transform: translateX(1em);
+  transform: translateX(1em);
 }
